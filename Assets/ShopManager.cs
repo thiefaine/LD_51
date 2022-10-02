@@ -1,13 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Timers;
-using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEditor.Tilemaps;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class ShopManager : MonoBehaviour
