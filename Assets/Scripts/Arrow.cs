@@ -27,8 +27,6 @@ public class Arrow : MonoBehaviour
     public bool IsOnGround { get { return _isOnGround; } }
     public bool IsPickupable { get { return _isPickupable; } }
     
-    
-
     private List<Collider2D> _insideColliders = new List<Collider2D>();
 
     [Header("Visual")]
@@ -64,7 +62,6 @@ public class Arrow : MonoBehaviour
         Vector3 nextPos = transform.position + new Vector3(_currentVelocity.x, _currentVelocity.y, 0f);
         transform.position = nextPos;
         
-        // TODO DEBUG : velocity jittery 
         // TODO : eject if grounded under Boss
     }
 
@@ -98,7 +95,7 @@ public class Arrow : MonoBehaviour
         Boss boss = col.GetComponent<Boss>();
         if (boss && boss.LifeRatio > 0f)
         {
-            // TODO small slo mo ??
+            // TODO freeze frame
 
             float damages = Mathf.Lerp(minDamage, maxDamage, _ratioForce);
             if (_currentVelocity.magnitude <= velocityThreshold)
@@ -121,7 +118,6 @@ public class Arrow : MonoBehaviour
             _currentDirection = Vector2.Reflect(_currentDirection, wall.normal);
             float angle = Mathf.Atan2(_currentDirection.y, _currentDirection.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            // TODO orientation
         }
     }
 

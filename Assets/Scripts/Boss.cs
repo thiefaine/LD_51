@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Mono.Cecil.Cil;
 using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Boss : MonoBehaviour
 {
@@ -54,16 +55,21 @@ public class Boss : MonoBehaviour
     public List<EBoss> timeline = new List<EBoss>();
     public float minCd;
     public float maxCd;
+    public AnimationCurve curveZigZag;
     private int _indexTimeline;
     private float _currentCd = 0f;
     private EBoss _state = EBoss.Idle;
     private List<GameObject> _bullets = new List<GameObject>();
+    private bool _bulletsRunning = false;
+    private bool _jumpRunning = false;
+    private PlayerInput _playerInput;
         
     // Start is called before the first frame update
     void Start()
     {
         _currentLife = maxLife;
         _currentCd = Random.Range(minCd, maxCd);
+        _playerInput = FindObjectOfType<PlayerInput>();
     }
 
     // Update is called once per frame
@@ -74,8 +80,6 @@ public class Boss : MonoBehaviour
         sprite.transform.localScale = scaleSquash;
         
         // brain
-        // TODO Cooldown, set state, etc...
-        
         UpdateState();
     }
 
@@ -90,10 +94,11 @@ public class Boss : MonoBehaviour
     {
         if (_state == EBoss.Intro)
         {
-            ChangeState(EBoss.Idle);
         }
         else if (_state == EBoss.Idle)
         {
+            _currentCd = Random.Range(minCd, maxCd);
+            
             _targetDirection = Random.insideUnitCircle.normalized;
             _currentDirection = Random.insideUnitCircle.normalized;
             _durationChangeDirection = Random.Range(minDurationChangeDirection, maxDurationChangeDirection);
@@ -102,6 +107,23 @@ public class Boss : MonoBehaviour
         else if (_state == EBoss.Bulletts)
         {
             // TODO play anim attack
+            
+            int rnd = Random.Range(1, 5);
+            switch (rnd)
+            {
+                case 1:
+                    StartCoroutine(BulletPatternCircle());
+                    break;
+                case 2:
+                    StartCoroutine(BulletPatternZigZag());
+                    break;
+                case 3:
+                    StartCoroutine(BulletPatternRandom());
+                    break;
+                case 4:
+                    StartCoroutine(BulletPatternSnipe());
+                    break;
+            }
         }
         else if (_state == EBoss.Jump)
         {
@@ -161,11 +183,13 @@ public class Boss : MonoBehaviour
         }
         else if (_state == EBoss.Bulletts)
         {
-            // TODO chose bullet pattern 
+            if (!_bulletsRunning)
+                ChangeState(EBoss.Idle);
         }
         else if (_state == EBoss.Jump)
         {
-            
+            if (!_jumpRunning)
+                ChangeState(EBoss.Idle);
         }
     }
 
@@ -177,16 +201,117 @@ public class Boss : MonoBehaviour
         }
         else if (_state == EBoss.Idle)
         {
-            
         }
         else if (_state == EBoss.Bulletts)
         {
-            _currentCd = Random.Range(minCd, maxCd);
         }
         else if (_state == EBoss.Jump)
         {
-            _currentCd = Random.Range(minCd, maxCd);
         }
+    }
+
+    private IEnumerator BulletPatternCircle()
+    {
+        // Classic circle around
+        _bulletsRunning = true;
+        
+        yield return new WaitForSeconds(1f);
+        
+        float max = 16f;
+        float offsetAngle = (360f / max);
+        
+        for (int j = 0; j < 6; j++)
+        {
+            for (int i = 0; i < max; i++)
+            {
+                float angle = i * offsetAngle + j * offsetAngle * 0.33f;
+                Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+                GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+                bul.GetComponent<Bullet>().Shoot(dir, 1.5f);
+            }
+            yield return new WaitForSeconds(0.5f);
+        }
+        
+        yield return new WaitForEndOfFrame();
+        _bulletsRunning = false;
+    }
+    
+    private IEnumerator BulletPatternZigZag()
+    {
+        // zig zag cone toward player
+        _bulletsRunning = true;
+        
+        yield return new WaitForSeconds(1f);
+        
+        float maxAngle = 35f;
+        Vector2 baseDir = (_playerInput.transform.position - transform.position).normalized;
+        Vector2 topDir = Quaternion.AngleAxis(maxAngle, Vector3.forward) * baseDir;
+        Vector2 bottomDir = Quaternion.AngleAxis(-maxAngle, Vector3.forward) * baseDir;
+        
+        int maxJ = 30;
+        for (int j = 0; j < maxJ; j++)
+        {
+            float r = curveZigZag.Evaluate(Mathf.Clamp01((float)j / (float)maxJ));
+            Vector2 dir = Vector2.Lerp(topDir, bottomDir, r);
+            GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+            bul.GetComponent<Bullet>().Shoot(dir, 3f);
+            yield return new WaitForSeconds(0.08f);
+        }
+        
+        yield return new WaitForEndOfFrame();
+        _bulletsRunning = false;
+    }
+    
+    private IEnumerator BulletPatternRandom()
+    {
+        // random spray
+        _bulletsRunning = true;
+        
+        yield return new WaitForSeconds(1f);
+        
+        for (int j = 0; j < 60; j++)
+        {
+            float angle = Random.Range(0f, 360f);
+            Vector3 dir = Random.insideUnitCircle.normalized;
+            GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+            bul.GetComponent<Bullet>().Shoot(dir, 5f);
+            yield return new WaitForSeconds(0.04f);
+        }
+        
+        yield return new WaitForEndOfFrame();
+        _bulletsRunning = false;
+    }
+    
+    private IEnumerator BulletPatternSnipe()
+    {
+        // snipe player
+        _bulletsRunning = true;
+        
+        yield return new WaitForSeconds(1f);
+        Rigidbody2D playerRb = _playerInput.GetComponent<Rigidbody2D>();
+            
+        for (int j = 0; j < 3; j++)
+        {
+            Vector3 nextPosPlayer = _playerInput.transform.position + new Vector3(playerRb.velocity.x, playerRb.velocity.y, 0f) * 0.5f;
+            Vector2 dir = (nextPosPlayer - transform.position).normalized;
+            for (int i = 0; i < 2; i++)
+            {
+                GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+                bul.GetComponent<Bullet>().Shoot(dir, 10f);
+                yield return new WaitForSeconds(0.1f);
+            }
+            yield return new WaitForSeconds(1.5f);
+        }
+        
+        yield return new WaitForEndOfFrame();
+        _bulletsRunning = false;
+    }
+
+    private IEnumerator JumpAttack()
+    {
+        _jumpRunning = true;
+        yield return new WaitForEndOfFrame();
+        _jumpRunning = false;
     }
     
     public void Damage(float damages)

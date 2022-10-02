@@ -19,15 +19,15 @@ public class PlayerController : MonoBehaviour
     }
 
     [Header("Life")]
-    public float maxLife;
-    private float _currentLife;
-    public float CurrentLife
+    public int maxLife;
+    private int _currentLife;
+    public int CurrentLife
     {
         get { return _currentLife; }
     }
     public float LifeRatio
     {
-        get { return Mathf.Clamp01(_currentLife / maxLife); }
+        get { return Mathf.Clamp01((float)_currentLife / (float)maxLife); }
     }
 
     [Header("Moving")]
@@ -299,13 +299,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Damage()
+    {
+        // _currentLife = Mathf.Max(_currentLife - 1, 0);
+        // TODO - set IFRAME + blink
+    }
+
     public void OnDash()
     {
         // nothing for the moment
     }
-    
-    // private IEnumerator FeedbackShoot (float force)
-    // {
-    	// yield return new WaitForSeconds (1f);
-    // }
 }
