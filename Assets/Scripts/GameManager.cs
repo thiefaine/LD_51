@@ -65,11 +65,11 @@ public class GameManager : MonoBehaviour
         
         text.gameObject.SetActive(true);
         
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(2.5f);
         
         _boss.GetComponentInChildren<Animator>().SetBool("Charging", true);
         
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(2.5f);
         
         Time.timeScale = 0f;
         text.gameObject.SetActive(false);
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
         
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(1.5f);
         
         while (timer > 0f)
         {
