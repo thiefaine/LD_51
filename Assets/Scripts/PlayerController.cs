@@ -47,8 +47,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Dash")]
     public GameObject shadow;
-    public Color shadowColor;
-    public Color shadowColorDash;
     public AnimationCurve curveDashVelocity;
     public float dashVelocityFactor;
     public float durationDash;
@@ -135,7 +133,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _currentLife = maxLife;
-        shadow.GetComponent<SpriteRenderer>().color = shadowColor;
     }
 
     // Update is called once per frame
@@ -189,7 +186,7 @@ public class PlayerController : MonoBehaviour
                 targetMovementVeloc = _directionDash * speed;
                 if (_timerDash <= 0f)
                 {
-                    shadow.GetComponent<SpriteRenderer>().color = shadowColor;
+                    shadow.GetComponent<Animator>().SetBool("Dashing", false);
                     _movingState = EMoving.Free;
                 }
                 break;
@@ -394,7 +391,7 @@ public class PlayerController : MonoBehaviour
         _timerDashCoolDown = dashCoolDown;
         _dashReady = false;
 
-        shadow.GetComponent<SpriteRenderer>().color = shadowColorDash;
+        shadow.GetComponent<Animator>().SetBool("Dashing", true);
         _directionDash = _movementDirection;
         if (_directionDash == Vector2.zero)
             _directionDash = _cursorDirection;
