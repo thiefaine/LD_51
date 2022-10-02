@@ -809,6 +809,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Spritesheet_UI_TMP_9
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 176
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76a38078365dbe341bb3fd1b109d5431
+      internalID: 2120699700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -923,6 +944,7 @@ TextureImporter:
       Spritesheet_Art_60: -1000245147
       Spritesheet_Art_72: 291205342
       Spritesheet_UI_2: -202543386
+      Spritesheet_UI_TMP_9: 2120699700
       Spritesheet_Art_15: -1949219197
       Spritesheet_Art_92: -91071924
       Spritesheet_Art_6: 625437981

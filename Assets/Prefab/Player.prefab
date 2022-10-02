@@ -638,7 +638,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7921442027889558905
 Transform:
   m_ObjectHideFlags: 0
@@ -818,14 +818,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsLock: 0
-  maxLife: 2
+  maxLife: 3
   rb: {fileID: 8074095387950248544}
   velocityFactor: 2.5
   velocityFactorCharging: 1.25
   dampingStartVelocity: 0.1
   dampingStopVelocity: 0.05
   shadow: {fileID: 7936766869010118635}
-  abilityCoolDown: 1.25
+  abilityCoolDown: 1.15
   curvePosDash:
     serializedVersion: 2
     m_Curve:
@@ -948,7 +948,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   dashVelocityFactor: 5.5
   durationDash: 0.15
-  durationIFrames: 1.1
+  durationIFrames: 1.25
   durationBlink: 0.1
   sprite: {fileID: 8074095389667206050}
   dustFx: {fileID: 7776420282207140288}
@@ -1096,8 +1096,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   arrowPrefab: {fileID: 4330735493996821984, guid: e81d4c4960a3cf445829ed7e0301c4f1, type: 3}
-  maxAmmoArrows: 1
-  currentAmmoArrows: 1
+  maxAmmoArrows: 3
+  currentAmmoArrows: 3
 --- !u!114 &2660328325778737140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1361,7 +1361,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8074095389570248265}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.1}
+  m_LocalPosition: {x: 0.378, y: 0, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

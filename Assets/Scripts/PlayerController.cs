@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     public float dampingStopVelocity;
     
     private Vector2 _movementDirection;
-    private Vector2 _cursorDirection;
+    private Vector2 _cursorDirection = Vector2.right;
     private Vector2 _imposedDirection;
     private bool _isMoving = false;
     private float _durationIsMoving = 0f;
@@ -158,6 +158,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_currentLife <= 0f)
+        {
+            IsLock = true;
+            rb.velocity = Vector2.zero;
+            sprite.GetComponent<SpriteRenderer>().color = Color.red;
+            return;
+        }
+        
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // _cursorDirection = (mousePos - transform.position);
         // _cursorDirection.Normalize();
@@ -464,7 +472,7 @@ public class PlayerController : MonoBehaviour
         _timerBlink = durationBlink;
         _timerIFrames = durationIFrames;
         
-        // _currentLife = Mathf.Max(_currentLife - 1, 0);
+        _currentLife = Mathf.Max(_currentLife - 1, 0);
     }
 
     public void OnDash()

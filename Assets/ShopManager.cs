@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 
 public class ShopManager : MonoBehaviour
 {
-    public const int maxCash = 100;
+    public const int maxCash = 10;
     
     public enum EUpgrades
     {
@@ -37,6 +37,7 @@ public class ShopManager : MonoBehaviour
         public int price;
         public string description;
         public bool forPlayer;
+        public Sprite sprite;
     }
 
     [Header("upgrades")]
@@ -51,6 +52,7 @@ public class ShopManager : MonoBehaviour
 
     [Header("Panel")]
     public Image panel;
+    private HUDManager _hud;
     
     [Header("Currency")]
     public TextMeshProUGUI currency;
@@ -131,6 +133,7 @@ public class ShopManager : MonoBehaviour
         _gameManager = FindObjectOfType<GameManager>();
         _player = FindObjectOfType<PlayerController>();
         _boss = FindObjectOfType<Boss>();
+        _hud = FindObjectOfType<HUDManager>();
         
         _player.IsLock = true;
         _boss.IsLock = true;
@@ -189,8 +192,9 @@ public class ShopManager : MonoBehaviour
 
         fill.sprite = up.forPlayer ? fillPlayer : fillBoss;
         bg.sprite = up.forPlayer ? bgPlayer : bgBoss;
-        icon.sprite = up.forPlayer ? iconPlayer : iconBoss;
+        // icon.sprite = up.forPlayer ? iconPlayer : iconBoss;
         price.text = up.price.ToString() + "<sprite=0>";
+        icon.sprite = up.sprite;
         description.text = up.description;
     }
 
@@ -272,6 +276,7 @@ public class ShopManager : MonoBehaviour
         
         yield return new WaitForSecondsRealtime(0.2f);
         
+        _boss.GetComponentInChildren<Animator>().SetBool("Charging", false);
         gameObject.SetActive(false);
     }
 
@@ -382,7 +387,7 @@ public class ShopManager : MonoBehaviour
                 Arrow.ExtraDamageFactor = 0.25f;
                 break;
             case EUpgrades.IncreaseLife:
-                _player.IncreaseLife(1);
+                _player.IncreaseLife(3);
                 break;
             case EUpgrades.IncreaseSpeed:
                 PlayerController.ExtraMovementSpeedFactor = 0.2f;
@@ -403,9 +408,35 @@ public class ShopManager : MonoBehaviour
                 Arrow.ExtraDurationVelocity = 0.5f;
                 break;
             case EUpgrades.IncraseArrowNumber:
-                _player.IncreaseAmmo(1);
+                _player.IncreaseAmmo(3);
                 break;
         }
+        
+        _hud.SetImage(GetUpgradeFromType(type).sprite, _chosenUpgradesType.Count - 1);
+        StartCoroutine(Real());
+    }
+
+    public IEnumerator Real()
+    {
+        Time.timeScale = 0f;
+        
+        yield return new WaitForEndOfFrame();
+        
+        Time.timeScale = 1f;
+        // float duration = 1f;
+        // float timer = duration;
+        // while (timer > 0f)
+        // {
+        //     timer -= Time.unscaledDeltaTime;
+        //
+        //     float ratio = Mathf.Clamp01(timer / duration);
+        //     Debug.Log(ratio);
+        //     Time.timeScale = ratio;
+        // }
+        
+        yield return new WaitForSecondsRealtime(0.4f);
+        
+        Time.timeScale = 0f;
     }
     
     public void OnOverChoice1()
