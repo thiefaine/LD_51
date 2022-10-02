@@ -343,7 +343,7 @@ public class Boss : MonoBehaviour
             for (int i = 0; i < 3; i++)
             {
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-                float speed = 5.5f;
+                float speed = 7.5f;
                 speed -= speed * DowngradeSpeedFactor;
                 bul.GetComponent<Bullet>().Shoot(dir, speed);
                 yield return new WaitForSeconds(0.1f);
