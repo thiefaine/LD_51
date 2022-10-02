@@ -78,7 +78,7 @@ public class Bullet : MonoBehaviour
         _speed = 0f;
         animator.SetTrigger("HitWall");
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         
         GameObject.Destroy(gameObject);
     }

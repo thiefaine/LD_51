@@ -44,6 +44,13 @@ public class PlayerController : MonoBehaviour
     private float _durationIsMoving = 0f;
     private EMoving _movingState = EMoving.Free;
 
+    [Header("I-Frame")]
+    public float durationIFrames;
+    public float durationBlink;
+    private bool _isInIFrames = false;
+    private float _timerIFrames = 0f;
+    private float _timerBlink = 0f;
+
     [Header("Animation")]
     public GameObject sprite;
     public Animator dustFx;
@@ -118,6 +125,26 @@ public class PlayerController : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         // _cursorDirection = (mousePos - transform.position);
         // _cursorDirection.Normalize();
+        
+        // IFrames
+        if (_isInIFrames)
+        {
+            _timerBlink -= Time.deltaTime;
+            _timerIFrames -= Time.deltaTime;
+
+            if (_timerBlink <= 0f)
+            {
+                _timerBlink = durationBlink;
+                SpriteRenderer spr = sprite.GetComponent<SpriteRenderer>();
+                spr.enabled = !spr.enabled;
+            }
+
+            if (_timerIFrames <= 0f)
+            {
+                sprite.GetComponent<SpriteRenderer>().enabled = true;
+                _isInIFrames = false;
+            }
+        }
         
         // Movement
         float factor = Mathf.Lerp(velocityFactor, velocityFactorCharging, _chargingRatio); 
@@ -215,7 +242,6 @@ public class PlayerController : MonoBehaviour
             float rot = Mathf.PingPong(_durationIsMoving * animRotSpeed, maxRotAngle) - (maxRotAngle * 0.5f);
             sprite.transform.localRotation = Quaternion.Euler(0f, 0f, rot);
 
-            // TODO : particles step
             _timerDust += Time.deltaTime;
             if (_timerDust >= durationDust)
             {
@@ -301,8 +327,14 @@ public class PlayerController : MonoBehaviour
 
     public void Damage()
     {
+        if (_isInIFrames)
+            return;
+
+        _isInIFrames = true;
+        _timerBlink = durationBlink;
+        _timerIFrames = durationIFrames;
+        
         // _currentLife = Mathf.Max(_currentLife - 1, 0);
-        // TODO - set IFRAME + blink
     }
 
     public void OnDash()

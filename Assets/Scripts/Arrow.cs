@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Arrow : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class Arrow : MonoBehaviour
     public float minDamage;
     public float maxDamage;
 
+    [Header("Animation")]
+    public Animator animator;
+
     private float _durationArrow;
     private Vector2 _currentVelocity;
     private Vector2 _currentDirection;
@@ -24,6 +29,9 @@ public class Arrow : MonoBehaviour
     private bool _isLaunched = false;
     private bool _isOnGround = false;
     private bool _isPickupable = false;
+    private bool _isFreezing = false;
+    private bool _isUnderBoss = false;
+    private Boss _boss;
     public bool IsOnGround { get { return _isOnGround; } }
     public bool IsPickupable { get { return _isPickupable; } }
     
@@ -56,13 +64,14 @@ public class Arrow : MonoBehaviour
         if (_isLaunched && velocityMagnitude <= velocityThreshold)
             _isPickupable = true;
         
-        if (_isLaunched && _currentVelocity.magnitude <= 0.001f)
+        if (_isLaunched && !_isFreezing && _currentVelocity.magnitude <= 0.001f)
             _isOnGround = true;
 
+        if (_isUnderBoss && _isOnGround)
+            _currentVelocity = (transform.position - _boss.transform.position).normalized * minVelocity * Time.deltaTime;
+        
         Vector3 nextPos = transform.position + new Vector3(_currentVelocity.x, _currentVelocity.y, 0f);
         transform.position = nextPos;
-        
-        // TODO : eject if grounded under Boss
     }
 
     public void Shoot(Vector2 direction, float ratioForce)
@@ -78,36 +87,50 @@ public class Arrow : MonoBehaviour
 
     public void OnTriggerExit2D(Collider2D other)
     {
+        Boss boss = other.GetComponent<Boss>();
+        if (boss)
+        {
+            _isUnderBoss = false;
+            _boss = null;
+        }
+        
         _insideColliders.Remove(other);
     }
 
     public void OnTriggerStay2D(Collider2D col)
     {
-        if (!_isLaunched)
+        if (!_isLaunched || _insideColliders.Contains(col))
             return;
 
-        if (_insideColliders.Contains(col))
-            return;
-        
         _insideColliders.Add(col);
         
         // Boss case
         Boss boss = col.GetComponent<Boss>();
-        if (boss && boss.LifeRatio > 0f)
+        if (boss)
         {
-            // TODO freeze frame
-
-            float damages = Mathf.Lerp(minDamage, maxDamage, _ratioForce);
-            if (_currentVelocity.magnitude <= velocityThreshold)
-                damages = 0f;
+            _isUnderBoss = true;
+            _boss = boss;
             
-            boss.Damage(damages);
-
-            if (damages > 0f)
+            if (!_isPickupable)
             {
-                float forceShake = Mathf.Lerp(0.02f, 0.1f, _ratioForce);
-                float durationShake = Mathf.Lerp(0.05f, 0.1f, _ratioForce);
-                Camera.main.GetComponent<CameraManager>().ApplyShake(forceShake, durationShake);
+                StartCoroutine(FreezeFrame(0.15f));
+
+                float damages = Mathf.Lerp(minDamage, maxDamage, _ratioForce);
+                if (_currentVelocity.magnitude <= velocityThreshold)
+                    damages = 0f;
+                
+                boss.Damage(damages);
+                
+                animator.transform.SetParent(null, true);
+                animator.transform.rotation = quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+                animator.SetTrigger("Play");
+
+                if (damages > 0f)
+                {
+                    float forceShake = Mathf.Lerp(0.02f, 0.1f, _ratioForce);
+                    float durationShake = Mathf.Lerp(0.05f, 0.1f, _ratioForce);
+                    Camera.main.GetComponent<CameraManager>().ApplyShake(forceShake, durationShake);
+                }
             }
         }
         
@@ -125,5 +148,16 @@ public class Arrow : MonoBehaviour
     {
         float veloc = velocityFactorOverTime.Evaluate(durationRatio) * Mathf.Lerp(minVelocity, maxVelocity, _ratioForce);
         return _isOnGround ? Vector2.zero : _currentDirection.normalized * veloc * Time.deltaTime;
+    }
+
+    private IEnumerator FreezeFrame(float duration)
+    {
+        _isFreezing = true;
+        Time.timeScale = 0f;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        Time.timeScale = 1f;
+        _isFreezing = false;
     }
 }

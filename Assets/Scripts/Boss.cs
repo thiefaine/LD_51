@@ -128,6 +128,8 @@ public class Boss : MonoBehaviour
         else if (_state == EBoss.Jump)
         {
             // TODO play anim jump
+
+            StartCoroutine(JumpAttack());
         }
     }
 
@@ -297,7 +299,7 @@ public class Boss : MonoBehaviour
             for (int i = 0; i < 2; i++)
             {
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-                bul.GetComponent<Bullet>().Shoot(dir, 10f);
+                bul.GetComponent<Bullet>().Shoot(dir, 7f);
                 yield return new WaitForSeconds(0.1f);
             }
             yield return new WaitForSeconds(1.5f);
@@ -310,19 +312,25 @@ public class Boss : MonoBehaviour
     private IEnumerator JumpAttack()
     {
         _jumpRunning = true;
+        
+        yield return new WaitForSeconds(1f);
+        
+        
+        
         yield return new WaitForEndOfFrame();
         _jumpRunning = false;
     }
     
     public void Damage(float damages)
     {
-        _currentLife = Mathf.Max(_currentLife - damages, 0f);
-        
-        // TODO hit feedback
-        
-        if (_currentLife <= 0f)
+        if (_currentLife > 0f)
         {
-            // TODO dead !!
+            _currentLife = Mathf.Max(_currentLife - damages, 0f);
+            
+            if (_currentLife <= 0f)
+            {
+                // TODO dead !!
+            }
         }
     }
 }
