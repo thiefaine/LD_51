@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class Boss : MonoBehaviour
 {
+    public bool IsLock;
+    
     [Header("Life")]
     public float maxLife;
     private float _currentLife;
@@ -80,6 +82,9 @@ public class Boss : MonoBehaviour
         sprite.transform.localScale = scaleSquash;
         
         // brain
+        if (IsLock)
+            return;
+        
         UpdateState();
     }
 

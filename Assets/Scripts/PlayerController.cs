@@ -12,6 +12,8 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool IsLock;
+    
     public enum EMoving
     {
         Free,
@@ -313,6 +315,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnLook(InputValue value)
     {
+        if (IsLock)
+            return;
+        
         var val = value.Get<Vector2>();
         if (GetComponent<PlayerInput>().currentControlScheme == "Gamepad")
         {
@@ -331,6 +336,9 @@ public class PlayerController : MonoBehaviour
     // 'Move' input action has been triggered.
     public void OnMove(InputValue value)
     {
+        if (IsLock)
+            return;
+        
         var dir = value.Get<Vector2>();
         _movementDirection = dir.normalized;
 
@@ -342,6 +350,9 @@ public class PlayerController : MonoBehaviour
     
     public void OnFire(InputValue value)
     {
+        if (IsLock)
+            return;
+        
         if (value.isPressed && currentAmmoArrows > 0)
         {
             Vector3 startPos = bowObject.transform.position;
@@ -370,6 +381,9 @@ public class PlayerController : MonoBehaviour
 
     public void Damage()
     {
+        if (IsLock)
+            return;
+        
         if (_isInIFrames || _movingState == EMoving.Dash)
             return;
 
@@ -382,6 +396,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnDash()
     {
+        if (IsLock)
+            return;
+        
         if (_timerDashCoolDown > 0f)
             return;
             
