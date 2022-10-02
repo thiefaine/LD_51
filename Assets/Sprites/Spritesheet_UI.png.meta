@@ -171,7 +171,7 @@ TextureImporter:
       name: Spritesheet_Art_3
       rect:
         serializedVersion: 2
-        x: 48
+        x: 64
         y: 240
         width: 32
         height: 16
@@ -192,7 +192,7 @@ TextureImporter:
       name: Spritesheet_Art_5
       rect:
         serializedVersion: 2
-        x: 80
+        x: 48
         y: 240
         width: 16
         height: 16
@@ -646,6 +646,27 @@ TextureImporter:
       bones: []
       spriteID: 7f997931c2009754ab7c67d0e9191749
       internalID: -1612732461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spritesheet_Art_4
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 240
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f02342db1eb8e7241931c95d0413c937
+      internalID: -77864314
       vertices: []
       indices: 
       edges: []
