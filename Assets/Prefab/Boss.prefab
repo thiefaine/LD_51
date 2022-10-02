@@ -282,8 +282,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   distanceCast: 3
-  minSpeed: 0.4
-  maxSpeed: 0.8
+  minSpeed: 0.8
+  maxSpeed: 1.5
   minDurationChangeDirection: 3
   maxDurationChangeDirection: 5
   bullet: {fileID: 4332025899230246015, guid: e8dd5e2e01a52cd4ba49ac511fbe8dbe, type: 3}
