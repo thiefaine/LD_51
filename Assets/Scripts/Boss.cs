@@ -88,6 +88,12 @@ public class Boss : MonoBehaviour
         UpdateState();
     }
 
+    public void DowngradeBossLife(float factor)
+    {
+        maxLife = maxLife - maxLife * factor;
+        _currentLife = _currentLife - _currentLife * factor;
+    }
+
     private void ChangeState(EBoss newState)
     {
         EndState();

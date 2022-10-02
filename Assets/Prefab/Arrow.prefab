@@ -331,7 +331,7 @@ MonoBehaviour:
   durationVelocity: 2
   velocityThreshold: 0.004
   minDamage: 4
-  maxDamage: 10
+  maxDamage: 8
   animator: {fileID: 1960397703396522568}
   trail: {fileID: 2088525916049037654}
 --- !u!70 &4338378215116652764

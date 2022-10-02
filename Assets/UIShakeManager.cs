@@ -7,7 +7,7 @@ public class UIShakeManager : MonoBehaviour
     public AnimationCurve curveEffect;
     public GameObject panel;
     
-    private Vector3 _startPos;
+    private Vector3 _startLocalPos;
 
     private bool _impulse = false;
     private Vector3 _directionImpulse;
@@ -22,7 +22,7 @@ public class UIShakeManager : MonoBehaviour
     
     void Start()
     {
-        _startPos = panel.transform.position;
+        _startLocalPos = panel.transform.localPosition;
     }
 
     // Update is called once per frame
@@ -52,7 +52,7 @@ public class UIShakeManager : MonoBehaviour
                 _shake = false;
         }
         
-        panel.transform.position = _startPos + offsetImpulse + offsetShake;
+        panel.transform.localPosition = _startLocalPos + offsetImpulse + offsetShake;
     }
 
     public void ApplyImpulse(float force, float duration, Vector2 direction)

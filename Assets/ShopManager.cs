@@ -71,7 +71,7 @@ public class ShopManager : MonoBehaviour
     public TextMeshProUGUI priceChoice1;
     public TextMeshProUGUI descChoice1;
     public Image iconChoice1;
-    private Vector2 _startPosChoice1;
+    private Vector2 _startLocalPosChoice1;
     private bool _isOverChoice1 = false;
     private Upgrades _upgradeChoice1 = new Upgrades();
     // private Upgrades _newUpgradeChoice1;
@@ -83,7 +83,7 @@ public class ShopManager : MonoBehaviour
     public TextMeshProUGUI priceChoice2;
     public TextMeshProUGUI descChoice2;
     public Image iconChoice2;
-    private Vector2 _startPosChoice2;
+    private Vector2 _startLocalPosChoice2;
     private bool _isOverChoice2 = false;
     private Upgrades _upgradeChoice2 = new Upgrades();
     // private Upgrades _newUpgradeChoice2;
@@ -95,7 +95,7 @@ public class ShopManager : MonoBehaviour
     public TextMeshProUGUI priceChoice3;
     public TextMeshProUGUI descChoice3;
     public Image iconChoice3;
-    private Vector2 _startPosChoice3;
+    private Vector2 _startLocalPosChoice3;
     private bool _isOverChoice3 = false;
     private Upgrades _upgradeChoice3 = new Upgrades();
     // private Upgrades _newUpgradeChoice3;
@@ -125,7 +125,7 @@ public class ShopManager : MonoBehaviour
     private float _timerReRoll3;
     private bool _lockAnim = false;
 
-    private Vector2 _startPos;
+    private Vector2 _startLocalPos;
 
     void Awake()
     {
@@ -139,21 +139,19 @@ public class ShopManager : MonoBehaviour
         Time.timeScale = 0f;
         
         _remainingUpgrades.AddRange(upgrades);
-        Debug.Log(_upgradeChoice1);
         GenerateChoice(fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1);
         GenerateChoice(fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2);
         GenerateChoice(fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3);
-        Debug.Log(_upgradeChoice1);
     }
 
 
     private void Start()
     {
-        _startPosChoice1 = choice1.transform.position;
-        _startPosChoice2 = choice2.transform.position;
-        _startPosChoice3 = choice3.transform.position;
+        _startLocalPosChoice1 = choice1.transform.localPosition;
+        _startLocalPosChoice2 = choice2.transform.localPosition;
+        _startLocalPosChoice3 = choice3.transform.localPosition;
         
-        _startPos = panel.gameObject.transform.position;
+        _startLocalPos = panel.gameObject.transform.localPosition;
     }
 
     private void GenerateChoice(Image fill, Image bg, Image icon, TextMeshProUGUI price, TextMeshProUGUI description, Upgrades upgradeChoice)
@@ -187,7 +185,7 @@ public class ShopManager : MonoBehaviour
         while (timer > 0f)
         {
             float ratio = 1f - curveReroll.Evaluate(Mathf.Clamp01(timer / duration));
-            choice.transform.position = Vector2.Lerp(startPos, startPos + Vector2.right * offst, ratio);
+            choice.transform.localPosition = Vector2.Lerp(startPos, startPos + Vector2.right * offst, ratio);
             timer -= Time.unscaledDeltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -200,12 +198,12 @@ public class ShopManager : MonoBehaviour
             while (timer > 0f)
             {
                 float ratio = 1f - curveReroll.Evaluate(Mathf.Clamp01(timer / duration));
-                choice.transform.position = Vector2.Lerp(startPos - Vector2.right * offst, startPos, ratio);
+                choice.transform.localPosition = Vector2.Lerp(startPos - Vector2.right * offst, startPos, ratio);
                 timer -= Time.unscaledDeltaTime;
                 yield return new WaitForEndOfFrame();
             }
 
-            choice.transform.position = startPos;
+            choice.transform.localPosition = startPos;
         }
         
         _lockAnim = false;
@@ -222,7 +220,7 @@ public class ShopManager : MonoBehaviour
         while (timer > 0f)
         {
             float ratio = 1f - curveReroll.Evaluate(Mathf.Clamp01((timer / duration)));
-            panel.transform.position = Vector2.Lerp(_startPos, _startPos + Vector2.up * 1000f, ratio);
+            panel.transform.localPosition = Vector2.Lerp(_startLocalPos, _startLocalPos + Vector2.up * 1000f, ratio);
             
             Color c = panel.color;
             c.a = MathHelper.Damping(c.a, 0f, Time.unscaledDeltaTime, 0.1f);
@@ -336,6 +334,38 @@ public class ShopManager : MonoBehaviour
 
     private void BuyUpgrade(Upgrades upgrade)
     {
+        _chosenUpgrades.Add(upgrade);
+        
+        switch (upgrade.type)
+        {
+            case EUpgrades.AddDash:
+                PlayerController.HasDash = true;
+                break;
+            case EUpgrades.AddJump:
+                PlayerController.HasJump = true;
+                break;
+            case EUpgrades.IncreaseDamage:
+                Arrow.ExtraDamageFactor = 0.15f;
+                break;
+            case EUpgrades.IncreaseLife:
+                _player.IncreaseLife(1);
+                break;
+            case EUpgrades.IncreaseSpeed:
+                PlayerController.ExtraMovementSpeedFactor = 0.1f;
+                break;
+            case EUpgrades.BossDecreaseLife:
+                _boss.DowngradeBossLife(0.1f);
+                break;
+            case EUpgrades.BossDecreaseSpeed:
+                break;
+            case EUpgrades.Every10FreezeBoss:
+                break;
+            case EUpgrades.Every10ShootExtra:
+                break;
+            case EUpgrades.IncreaseDistanceShoot:
+                Arrow.ExtraDurationVelocity = 0.5f;
+                break;
+        }
     }
     
     public void OnOverChoice1()
@@ -363,7 +393,7 @@ public class ShopManager : MonoBehaviour
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
         cash -= _upgradeChoice1.price;
         BuyUpgrade(_upgradeChoice1);
-        StartCoroutine(RerollChoice(choice1, _startPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
+        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
     }
     
     public void OnOverChoice2()
@@ -391,7 +421,7 @@ public class ShopManager : MonoBehaviour
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
         cash -= _upgradeChoice2.price;
         BuyUpgrade(_upgradeChoice2);
-        StartCoroutine(RerollChoice(choice2, _startPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
+        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
     }
     
     public void OnOverChoice3()
@@ -419,7 +449,7 @@ public class ShopManager : MonoBehaviour
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
         cash -= _upgradeChoice3.price;
         BuyUpgrade(_upgradeChoice3);
-        StartCoroutine(RerollChoice(choice3, _startPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
+        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
     }
     
     public void OnOverLucky()
@@ -473,9 +503,9 @@ public class ShopManager : MonoBehaviour
         
         cash -= 4;
         GetComponent<UIShakeManager>().ApplyShake(10f, 0.1f);
-        StartCoroutine(RerollChoice(choice1, _startPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
-        StartCoroutine(RerollChoice(choice2, _startPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
-        StartCoroutine(RerollChoice(choice3, _startPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
+        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
+        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
+        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
     }
     
     public void OnOverCoffee()

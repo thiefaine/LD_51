@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Schema;
+using Mono.Cecil.Cil;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -12,13 +13,19 @@ using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
+    // UPGRADES
+    public static float ExtraMovementSpeedFactor;
+    public static bool HasDash = true;
+    public static bool HasJump = true;
+    // UPGRADES
+        
     public bool IsLock;
     
     public enum EMoving
     {
         Free,
         Imposed,
-        Dash,
+        Ability,
     }
 
     [Header("Life")]
@@ -47,20 +54,27 @@ public class PlayerController : MonoBehaviour
     private float _durationIsMoving = 0f;
     private EMoving _movingState = EMoving.Free;
 
-    [Header("Dash")]
+    [Header("Ability")]
     public GameObject shadow;
-    public AnimationCurve curveDashVelocity;
-    public float dashVelocityFactor;
-    public float durationDash;
-    public float dashCoolDown;
+    [FormerlySerializedAs("dashCoolDown")] public float abilityCoolDown;
+    private float _timerAbilityCoolDown = 0f;
+    private Vector2 _directionAbility;
+    private bool _abilityReady = true;
+    
+    [Header("Jump")]
     public AnimationCurve curvePosDash;
     public AnimationCurve curveRotDash;
     public float dashPosFactor;
     public float dashRotFactor;
+    public float durationJump;
+    private float _timerJump = 0f;
+    private bool _isJumping = false;
+    
+    [Header("Dash")]
+    public AnimationCurve curveDashVelocity;
+    public float dashVelocityFactor;
+    public float durationDash;
     private float _timerDash = 0f;
-    private float _timerDashCoolDown = 0f;
-    private Vector2 _directionDash;
-    private bool _dashReady = true;
 
     [Header("I-Frame")]
     public float durationIFrames;
@@ -165,32 +179,47 @@ public class PlayerController : MonoBehaviour
         }
         
         // Dash
-        _timerDashCoolDown -= Time.deltaTime;
-        if (_timerDashCoolDown <= 0f && !_dashReady)
+        _timerAbilityCoolDown -= Time.deltaTime;
+        if (_timerAbilityCoolDown <= 0f && !_abilityReady)
         {
             shadow.GetComponent<Animator>().SetTrigger("Trigger");
-            _dashReady = true;
+            _abilityReady = true;
         }
         
         // Movement
-        float factor = Mathf.Lerp(velocityFactor, velocityFactorCharging, _chargingRatio); 
         Vector2 targetMovementVeloc = Vector2.zero;
+        
+        float speedFactor = Mathf.Lerp(velocityFactor, velocityFactorCharging, _chargingRatio);
+        speedFactor += speedFactor * ExtraMovementSpeedFactor;
+        float dampFactor = (_movementDirection == Vector2.zero) ? dampingStopVelocity : dampingStartVelocity;
+        Vector3 defaultVeloc = MathHelper.Damping(rb.velocity, _movementDirection * speedFactor , Time.deltaTime, dampFactor);
+        
         switch (_movingState)
         {
             case EMoving.Free:
-                float dampFactor = (_movementDirection == Vector2.zero) ? dampingStopVelocity : dampingStartVelocity;
-                targetMovementVeloc = MathHelper.Damping(rb.velocity, _movementDirection * factor , Time.deltaTime, dampFactor);
+                targetMovementVeloc = defaultVeloc;
                 break;
-            case EMoving.Dash:
+            case EMoving.Ability:
+                _timerJump -= Time.deltaTime;
                 _timerDash -= Time.deltaTime;
-                float dashRatio = Mathf.Clamp01(_timerDash / durationDash);
-                float speed = curveDashVelocity.Evaluate(dashRatio) * dashVelocityFactor; 
-                targetMovementVeloc = _directionDash * speed;
-                if (_timerDash <= 0f)
+                
+                if (HasDash && _timerDash > 0f)
                 {
-                    shadow.GetComponent<Animator>().SetBool("Dashing", false);
-                    _movingState = EMoving.Free;
+                    float dashRatio = 1f - Mathf.Clamp01(_timerDash / durationDash);
+                    float speed = curveDashVelocity.Evaluate(dashRatio) * dashVelocityFactor;
+                    targetMovementVeloc = _directionAbility * speed;
+                } else 
+                    targetMovementVeloc = defaultVeloc;
+
+                if (_timerDash <= 0f)
+                    GetComponent<Animator>().SetBool("Dashing", false);
+                if (_timerJump <= 0f)
+                {
+                    shadow.GetComponent<Animator>().SetBool("Jumping", false);
+                    _isJumping = false;
                 }
+                if (_timerDash <= 0f && _timerJump <= 0f)
+                    _movingState = EMoving.Free;
                 break;
             case EMoving.Imposed:
                 targetMovementVeloc = _imposedDirection * velocityFactor;
@@ -298,12 +327,18 @@ public class PlayerController : MonoBehaviour
                 sprite.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             }
         }
-        else if (_movingState == EMoving.Dash)
+        else if (_isJumping)
         {
-            float ratioDash = Mathf.Clamp01(_timerDash / durationDash);
+            float ratioDash = Mathf.Clamp01(_timerJump / durationJump);
             sprite.transform.localPosition = new Vector3(0f, (curvePosDash.Evaluate(ratioDash) * dashPosFactor) - 0.25f, 0f);
             sprite.transform.RotateAround(Vector3.forward, curveRotDash.Evaluate(ratioDash) * dashRotFactor);
         }
+    }
+
+    public void IncreaseLife(int value)
+    {
+        maxLife += value;
+        _currentLife += value;
     }
 
     private void SetGaugeUIColor(Color col)
@@ -384,7 +419,7 @@ public class PlayerController : MonoBehaviour
         if (IsLock)
             return;
         
-        if (_isInIFrames || _movingState == EMoving.Dash)
+        if (_isInIFrames || _isJumping)
             return;
 
         _isInIFrames = true;
@@ -399,21 +434,36 @@ public class PlayerController : MonoBehaviour
         if (IsLock)
             return;
         
-        if (_timerDashCoolDown > 0f)
+        if (!HasJump && !HasDash || (_timerAbilityCoolDown > 0))
             return;
             
         // nothing for the moment
-        _movingState = EMoving.Dash;
-        _timerDash = durationDash;
-        _timerDashCoolDown = dashCoolDown;
-        _dashReady = false;
+        _movingState = EMoving.Ability;
+        _timerAbilityCoolDown = abilityCoolDown;
+        _abilityReady = false;
 
-        shadow.GetComponent<Animator>().SetBool("Dashing", true);
-        _directionDash = _movementDirection;
-        if (_directionDash == Vector2.zero)
-            _directionDash = _cursorDirection;
-        if (_directionDash == Vector2.zero)
-            _directionDash = Vector2.right;
-        _directionDash.Normalize();
+        if (HasDash)
+        {
+            _timerDash = durationDash;
+            GetComponent<Animator>().SetBool("Dashing", true);
+        }
+        if (HasJump)
+        {
+            _timerJump = durationJump;
+            shadow.GetComponent<Animator>().SetBool("Jumping", true);
+            _isJumping = true;
+        }
+
+        if (HasDash)
+        {
+            if (GetComponent<PlayerInput>().currentControlScheme == "Gamepad")
+                _directionAbility = _movementDirection;
+            else
+                _directionAbility = _cursorDirection; // TODO check if ok
+            
+            if (_directionAbility == Vector2.zero)
+                _directionAbility = Vector2.right;
+            _directionAbility.Normalize();
+        }
     }
 }
