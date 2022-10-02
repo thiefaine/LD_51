@@ -251,10 +251,10 @@ public class Boss : MonoBehaviour
         
         yield return new WaitForSeconds(1f);
         
-        float max = 16f;
+        float max = 14f;
         float offsetAngle = (360f / max);
         
-        for (int j = 0; j < 6; j++)
+        for (int j = 0; j < 7; j++)
         {
             for (int i = 0; i < max; i++)
             {
