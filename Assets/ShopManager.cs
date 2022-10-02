@@ -313,8 +313,8 @@ public class ShopManager : MonoBehaviour
         currency.text = (int)(gaugeCurrent.fillAmount * maxCash) + "<sprite=0>";
 
         float price1 = GetUpgradeFromType(_upgradeChoice1).price;
-        float price2 = GetUpgradeFromType(_upgradeChoice1).price;
-        float price3 = GetUpgradeFromType(_upgradeChoice1).price;
+        float price2 = GetUpgradeFromType(_upgradeChoice2).price;
+        float price3 = GetUpgradeFromType(_upgradeChoice3).price;
         
         priceChoice1.color = price1 > cash ? noCashColor : Color.white;
         priceChoice2.color = price2 > cash ? noCashColor : Color.white;
