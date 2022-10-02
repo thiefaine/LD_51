@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 7655996741928305302}
   - component: {fileID: 2644727373448554597}
   - component: {fileID: 5906001326972638226}
-  m_Layer: 0
+  - component: {fileID: 128134466252401257}
+  m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +49,120 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLife: 100
+  sprite: {fileID: 8286105326022030827}
+  curveScaleX:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.95
+      inSlope: -0.060983125
+      outSlope: -0.060983125
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.49714088
+    - serializedVersion: 3
+      time: 0.7045616
+      value: 1.1538038
+      inSlope: 0.3432526
+      outSlope: 0.3432526
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.18471302
+    - serializedVersion: 3
+      time: 1
+      value: 1.2
+      inSlope: -0.021597942
+      outSlope: -0.021597942
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.27590197
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 4
+  curveScaleY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.05
+      inSlope: -0.3022184
+      outSlope: -0.3022184
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.10638169
+    - serializedVersion: 3
+      time: 1
+      value: 0.9
+      inSlope: -0.014781348
+      outSlope: -0.014781348
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.24065095
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 4
+  scaleSpeed: 1.5
+  rb: {fileID: 2644727373448554597}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 512
+  distanceCast: 3
+  minSpeed: 0.4
+  maxSpeed: 0.8
+  minDurationChangeDirection: 3
+  maxDurationChangeDirection: 5
+  bullet: {fileID: 4332025899230246015, guid: e8dd5e2e01a52cd4ba49ac511fbe8dbe, type: 3}
+  timeline: 02000000020000000300000002000000030000000300000002000000
+  minCd: 2
+  maxCd: 2
+  curveZigZag:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1.0428807
+      outSlope: -1.0428807
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.13812155
+    - serializedVersion: 3
+      time: 0.33
+      value: 0
+      inSlope: -3.8625228
+      outSlope: 4.011081
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.07458562
+      outWeight: 0.049723744
+    - serializedVersion: 3
+      time: 0.66
+      value: 1
+      inSlope: 0.3611961
+      outSlope: -3.4386017
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.37183994
+      outWeight: 0.17533304
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1.1530603
+      outSlope: -1.1530603
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.26405597
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!50 &2644727373448554597
 Rigidbody2D:
   serializedVersion: 4
@@ -82,7 +197,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.059137583}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -93,8 +208,28 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 0.88172483}
   m_EdgeRadius: 0
+--- !u!95 &128134466252401257
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301035826082495637}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3bc836c2c36a7cb48ae3c6e3b8e26457, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8286105326022030827
 GameObject:
   m_ObjectHideFlags: 0
@@ -120,8 +255,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8286105326022030827}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.21381545}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.493, z: -0.21381545}
+  m_LocalScale: {x: 2.336293, y: 2.5407186, z: 2.336293}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5406275087679637361}
@@ -167,8 +302,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 1a521b9c874babd49baba2ac2b8fec9d, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 1984793556, guid: 06b3a7e16ea2ed34fac0fe01db48b944, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
