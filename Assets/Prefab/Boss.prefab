@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7655996741928305302}
   - component: {fileID: 2644727373448554597}
   - component: {fileID: 5906001326972638226}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,6 +48,78 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxLife: 100
+  sprite: {fileID: 8286105326022030827}
+  curveScaleX:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.95
+      inSlope: -0.060983125
+      outSlope: -0.060983125
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.49714088
+    - serializedVersion: 3
+      time: 0.7045616
+      value: 1.1538038
+      inSlope: 0.3432526
+      outSlope: 0.3432526
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.18471302
+    - serializedVersion: 3
+      time: 1
+      value: 1.2
+      inSlope: -0.021597942
+      outSlope: -0.021597942
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.27590197
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 4
+  curveScaleY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.05
+      inSlope: -0.3022184
+      outSlope: -0.3022184
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.10638169
+    - serializedVersion: 3
+      time: 1
+      value: 0.9
+      inSlope: -0.014781348
+      outSlope: -0.014781348
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.24065095
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 4
+  scaleSpeed: 1.5
+  rb: {fileID: 2644727373448554597}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 512
+  distanceCast: 3
+  minSpeed: 0.4
+  maxSpeed: 0.8
+  minDurationChangeDirection: 3
+  maxDurationChangeDirection: 5
+  bullet: {fileID: 0}
+  timeline: 02000000020000000300000002000000030000000300000002000000
+  minCd: 100
+  maxCd: 100
 --- !u!50 &2644727373448554597
 Rigidbody2D:
   serializedVersion: 4

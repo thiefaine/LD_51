@@ -34,7 +34,6 @@ public class CameraManager : MonoBehaviour
         {
             _timerImpulse += Time.unscaledDeltaTime;
             float ratioImpulse = Mathf.Clamp01(_timerImpulse / _durationImpulse); 
-            Debug.Log("test : " + ratioImpulse);
             Vector2 directionImp = _directionImpulse.normalized * _forceImpusle;
             offsetImpulse = directionImp * curveEffect.Evaluate(ratioImpulse);
             if (ratioImpulse >= 1f)

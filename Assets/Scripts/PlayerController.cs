@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml.Schema;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -115,8 +116,8 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        _cursorDirection = (mousePos - transform.position);
-        _cursorDirection.Normalize();
+        // _cursorDirection = (mousePos - transform.position);
+        // _cursorDirection.Normalize();
         
         // Movement
         float factor = Mathf.Lerp(velocityFactor, velocityFactorCharging, _chargingRatio); 
@@ -239,6 +240,23 @@ public class PlayerController : MonoBehaviour
         gaugeLeftPart.GetComponent<SpriteRenderer>().color = col;
         gaugeRightPart.GetComponent<SpriteRenderer>().color = col;      
         gaugeCenterPart.GetComponent<SpriteRenderer>().color = col;
+    }
+
+    public void OnLook(InputValue value)
+    {
+        var val = value.Get<Vector2>();
+        if (GetComponent<PlayerInput>().currentControlScheme == "Gamepad")
+        {
+            if (val != Vector2.zero)
+                _cursorDirection = val;
+        }
+        else
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(val);
+            _cursorDirection = (mousePos - transform.position);
+        }
+        
+        _cursorDirection.Normalize();
     }
 
     // 'Move' input action has been triggered.
