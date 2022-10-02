@@ -7,6 +7,11 @@ using Random = UnityEngine.Random;
 
 public class Arrow : MonoBehaviour
 {
+    // UPGRADES
+    public static float ExtraDurationVelocity = 0f;
+    public static float ExtraDamageFactor = 0f;
+    // UPGRADES
+    
     [Header("Velocity")]
     public float maxVelocity;
     public float minVelocity;
@@ -57,7 +62,8 @@ public class Arrow : MonoBehaviour
     {
         _durationArrow += Time.deltaTime;
 
-        float ratioDuration = Mathf.Clamp01(_durationArrow / durationVelocity);
+        float totalDuration = durationVelocity + ExtraDurationVelocity;
+        float ratioDuration = Mathf.Clamp01(_durationArrow / totalDuration);
         _currentVelocity = GetVelocityWithRatio(ratioDuration);
         float velocityMagnitude = _currentVelocity.magnitude;
         
@@ -116,6 +122,8 @@ public class Arrow : MonoBehaviour
                 StartCoroutine(FreezeFrame(0.15f));
 
                 float damages = Mathf.Lerp(minDamage, maxDamage, _ratioForce);
+                damages += damages * ExtraDamageFactor;
+                
                 if (_currentVelocity.magnitude <= velocityThreshold)
                     damages = 0f;
                 
