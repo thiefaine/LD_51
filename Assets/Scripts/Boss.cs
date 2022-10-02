@@ -8,6 +8,11 @@ using UnityEngine.InputSystem;
 public class Boss : MonoBehaviour
 {
     public bool IsLock;
+
+    [Header("Upgrade")]
+    public static float DowngradeSpeedFactor = 0f;
+    public static bool HasAutoHit = false;
+    private float _timerAutoHit = 10f;
     
     [Header("Life")]
     public float maxLife;
@@ -84,6 +89,16 @@ public class Boss : MonoBehaviour
         // brain
         if (IsLock)
             return;
+        
+        if (HasAutoHit)
+        {
+            _timerAutoHit -= Time.deltaTime;
+            if (_timerAutoHit <= 0f)
+            {
+                _timerAutoHit = 10f;
+                Damage(maxLife * 0.05f);
+            }
+        }
         
         UpdateState();
     }
@@ -240,7 +255,9 @@ public class Boss : MonoBehaviour
                 float angle = i * offsetAngle + j * offsetAngle * 0.33f;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-                bul.GetComponent<Bullet>().Shoot(dir, 1.5f);
+                float speed = 1.5f;
+                speed -= speed * DowngradeSpeedFactor;
+                bul.GetComponent<Bullet>().Shoot(dir, speed);
             }
             yield return new WaitForSeconds(0.5f);
         }
@@ -267,7 +284,9 @@ public class Boss : MonoBehaviour
             float r = curveZigZag.Evaluate(Mathf.Clamp01((float)j / (float)maxJ));
             Vector2 dir = Vector2.Lerp(topDir, bottomDir, r);
             GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-            bul.GetComponent<Bullet>().Shoot(dir, 3f);
+            float speed = 3f;
+            speed -= speed * DowngradeSpeedFactor;
+            bul.GetComponent<Bullet>().Shoot(dir, speed);
             yield return new WaitForSeconds(0.08f);
         }
         
@@ -287,7 +306,9 @@ public class Boss : MonoBehaviour
             float angle = Random.Range(0f, 360f);
             Vector3 dir = Random.insideUnitCircle.normalized;
             GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-            bul.GetComponent<Bullet>().Shoot(dir, 5f);
+            float speed = 5f;
+            speed -= speed * DowngradeSpeedFactor;
+            bul.GetComponent<Bullet>().Shoot(dir, speed);
             yield return new WaitForSeconds(0.04f);
         }
         
@@ -310,10 +331,12 @@ public class Boss : MonoBehaviour
             for (int i = 0; i < 3; i++)
             {
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
+                float speed = 9f;
+                speed -= speed * DowngradeSpeedFactor;
                 bul.GetComponent<Bullet>().Shoot(dir, 9f);
                 yield return new WaitForSeconds(0.1f);
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.9f);
         }
         
         yield return new WaitForEndOfFrame();
