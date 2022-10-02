@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 
 public class ShopManager : MonoBehaviour
 {
-    public const int maxCash = 10;
+    public const int maxCash = 100;
     
     public enum EUpgrades
     {
@@ -24,8 +24,10 @@ public class ShopManager : MonoBehaviour
         BossDecreaseSpeed,
         AddJump,
         IncreaseDistanceShoot,
-        Every10FreezeBoss,
-        Every10ShootExtra
+        IncraseArrowNumber,
+        Every10HitBoss,
+        Every10ShootExtra,
+        None,
     }
 
     [System.Serializable]
@@ -41,8 +43,8 @@ public class ShopManager : MonoBehaviour
     public int cash = 10;
     public List<Upgrades> upgrades = new List<Upgrades>();
     
-    private List<Upgrades> _chosenUpgrades = new List<Upgrades>();
-    private List<Upgrades> _remainingUpgrades = new List<Upgrades>();
+    private List<EUpgrades> _chosenUpgradesType = new List<EUpgrades>();
+    private List<EUpgrades> _remainingUpgradesType = new List<EUpgrades>();
     private GameManager _gameManager;
     private PlayerController _player;
     private Boss _boss;
@@ -73,8 +75,7 @@ public class ShopManager : MonoBehaviour
     public Image iconChoice1;
     private Vector2 _startLocalPosChoice1;
     private bool _isOverChoice1 = false;
-    private Upgrades _upgradeChoice1 = new Upgrades();
-    // private Upgrades _newUpgradeChoice1;
+    private EUpgrades _upgradeChoice1 = EUpgrades.None;
     
     [Header("choice 2")]
     public GameObject choice2;
@@ -85,8 +86,7 @@ public class ShopManager : MonoBehaviour
     public Image iconChoice2;
     private Vector2 _startLocalPosChoice2;
     private bool _isOverChoice2 = false;
-    private Upgrades _upgradeChoice2 = new Upgrades();
-    // private Upgrades _newUpgradeChoice2;
+    private EUpgrades _upgradeChoice2 = EUpgrades.None;
     
     [Header("choice 3")]
     public GameObject choice3;
@@ -97,8 +97,7 @@ public class ShopManager : MonoBehaviour
     public Image iconChoice3;
     private Vector2 _startLocalPosChoice3;
     private bool _isOverChoice3 = false;
-    private Upgrades _upgradeChoice3 = new Upgrades();
-    // private Upgrades _newUpgradeChoice3;
+    private EUpgrades _upgradeChoice3 = EUpgrades.None;
 
     [Header("Reroll")]
     public Image rerollImg;
@@ -136,17 +135,18 @@ public class ShopManager : MonoBehaviour
         _player.IsLock = true;
         _boss.IsLock = true;
 
-        Time.timeScale = 0f;
+        cash = maxCash;
         
-        _remainingUpgrades.AddRange(upgrades);
-        GenerateChoice(fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1);
-        GenerateChoice(fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2);
-        GenerateChoice(fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3);
+        Time.timeScale = 0f;
     }
 
 
     private void Start()
     {
+        GenerateChoice(fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, 1);
+        GenerateChoice(fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, 2);
+        GenerateChoice(fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, 3);
+        
         _startLocalPosChoice1 = choice1.transform.localPosition;
         _startLocalPosChoice2 = choice2.transform.localPosition;
         _startLocalPosChoice3 = choice3.transform.localPosition;
@@ -154,28 +154,58 @@ public class ShopManager : MonoBehaviour
         _startLocalPos = panel.gameObject.transform.localPosition;
     }
 
-    private void GenerateChoice(Image fill, Image bg, Image icon, TextMeshProUGUI price, TextMeshProUGUI description, Upgrades upgradeChoice)
+    private void GenerateChoice(Image fill, Image bg, Image icon, TextMeshProUGUI price, TextMeshProUGUI description, int numberChoice)
     {
-        if (_remainingUpgrades.Count <= 0)
-        {
-            return;
-        }
+        _remainingUpgradesType = new List<EUpgrades>();
+        for (int i = 0; i < upgrades.Count; i++)
+            _remainingUpgradesType.Add(upgrades[i].type);
         
-        int index = Random.Range(0, _remainingUpgrades.Count);
-        upgradeChoice.description = _remainingUpgrades[index].description;
-        upgradeChoice.price = _remainingUpgrades[index].price;
-        upgradeChoice.forPlayer = _remainingUpgrades[index].forPlayer;
-        upgradeChoice.type = _remainingUpgrades[index].type;
-        _remainingUpgrades.Remove(upgradeChoice);
+        _remainingUpgradesType.Remove(_upgradeChoice1);
+        _remainingUpgradesType.Remove(_upgradeChoice2);
+        _remainingUpgradesType.Remove(_upgradeChoice3);
 
-        fill.sprite = upgradeChoice.forPlayer ? fillPlayer : fillBoss;
-        bg.sprite = upgradeChoice.forPlayer ? bgPlayer : bgBoss;
-        icon.sprite = upgradeChoice.forPlayer ? iconPlayer : iconBoss;
-        price.text = upgradeChoice.price.ToString() + "<sprite=0>";
-        description.text = upgradeChoice.description;
+        for (int i = 0; i < _chosenUpgradesType.Count; i++)
+            _remainingUpgradesType.Remove(_chosenUpgradesType[i]);
+        
+        //FUCK THIS SHIT, I HAVE ENOUGH OF THIS
+        // CANT PASS REFERENCE, OBJECT IS NEVER ATTRIBUTED
+        // FUUUUUCK !
+        int index = Random.Range(0, _remainingUpgradesType.Count);
+        Upgrades up = GetUpgradeFromType(_remainingUpgradesType[index]);
+
+        switch (numberChoice)
+        {
+            case 1:
+                _upgradeChoice1 = _remainingUpgradesType[index];
+                break;
+            case 2 :
+                _upgradeChoice2 = _remainingUpgradesType[index];
+                break;
+            case 3 :
+                _upgradeChoice3 = _remainingUpgradesType[index];
+                break;
+        }
+        _remainingUpgradesType.RemoveAt(index);
+
+        fill.sprite = up.forPlayer ? fillPlayer : fillBoss;
+        bg.sprite = up.forPlayer ? bgPlayer : bgBoss;
+        icon.sprite = up.forPlayer ? iconPlayer : iconBoss;
+        price.text = up.price.ToString() + "<sprite=0>";
+        description.text = up.description;
     }
 
-    private IEnumerator RerollChoice(GameObject choice, Vector2 startPos, Image fill, Image bg, Image icon, TextMeshProUGUI price, TextMeshProUGUI desc, Upgrades upgradeChoice)
+    public Upgrades GetUpgradeFromType(EUpgrades type)
+    {
+        foreach (var up in upgrades)
+        {
+            if (up.type == type)
+                return up;
+        }
+
+        return null;
+    }
+
+    private IEnumerator RerollChoice(GameObject choice, Vector2 startPos, Image fill, Image bg, Image icon, TextMeshProUGUI price, TextMeshProUGUI desc, int upgradeChoice)
     {
         _lockAnim = true;
         
@@ -190,7 +220,7 @@ public class ShopManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        if (_remainingUpgrades.Count > 0)
+        if (_remainingUpgradesType.Count > 0)
         {
             GenerateChoice(fill, bg, icon, price, desc, upgradeChoice);
             
@@ -281,9 +311,13 @@ public class ShopManager : MonoBehaviour
         
         currency.text = (int)(gaugeCurrent.fillAmount * maxCash) + "<sprite=0>";
 
-        priceChoice1.color = _upgradeChoice1.price > cash ? noCashColor : Color.white;
-        priceChoice2.color = _upgradeChoice2.price > cash ? noCashColor : Color.white;
-        priceChoice3.color = _upgradeChoice3.price > cash ? noCashColor : Color.white;
+        float price1 = GetUpgradeFromType(_upgradeChoice1).price;
+        float price2 = GetUpgradeFromType(_upgradeChoice1).price;
+        float price3 = GetUpgradeFromType(_upgradeChoice1).price;
+        
+        priceChoice1.color = price1 > cash ? noCashColor : Color.white;
+        priceChoice2.color = price2 > cash ? noCashColor : Color.white;
+        priceChoice3.color = price3 > cash ? noCashColor : Color.white;
         priceReroll.color = 4 > cash ? noCashColor : Color.white;
         priceLucky.color = 3 > cash ? noCashColor : Color.white;
 
@@ -297,19 +331,19 @@ public class ShopManager : MonoBehaviour
             fillChoice1.fillAmount =
                 MathHelper.Damping(fillChoice1.fillAmount, target1, Time.unscaledDeltaTime, damping);
             if (_isOverChoice1)
-                targetPreview = Mathf.Clamp01(((float)cash - _upgradeChoice1.price) / (float)maxCash);
+                targetPreview = Mathf.Clamp01(((float)cash - price1) / (float)maxCash);
 
             float target2 = _isOverChoice2 ? 1f : 0f;
             fillChoice2.fillAmount =
                 MathHelper.Damping(fillChoice2.fillAmount, target2, Time.unscaledDeltaTime, damping);
             if (_isOverChoice2)
-                targetPreview = Mathf.Clamp01(((float)cash - _upgradeChoice2.price) / (float)maxCash);
+                targetPreview = Mathf.Clamp01(((float)cash - price2) / (float)maxCash);
 
             float target3 = _isOverChoice3 ? 1f : 0f;
             fillChoice3.fillAmount =
                 MathHelper.Damping(fillChoice3.fillAmount, target3, Time.unscaledDeltaTime, damping);
             if (_isOverChoice3)
-                targetPreview = Mathf.Clamp01(((float)cash - _upgradeChoice3.price) / (float)maxCash);
+                targetPreview = Mathf.Clamp01(((float)cash - price3) / (float)maxCash);
 
             float targetLucky = _isOverLucky ? 1f : 0f;
             fillLucky.fillAmount =
@@ -332,11 +366,11 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    private void BuyUpgrade(Upgrades upgrade)
+    private void BuyUpgrade(EUpgrades type)
     {
-        _chosenUpgrades.Add(upgrade);
+        _chosenUpgradesType.Add(type);
         
-        switch (upgrade.type)
+        switch (type)
         {
             case EUpgrades.AddDash:
                 PlayerController.HasDash = true;
@@ -345,25 +379,31 @@ public class ShopManager : MonoBehaviour
                 PlayerController.HasJump = true;
                 break;
             case EUpgrades.IncreaseDamage:
-                Arrow.ExtraDamageFactor = 0.15f;
+                Arrow.ExtraDamageFactor = 0.25f;
                 break;
             case EUpgrades.IncreaseLife:
                 _player.IncreaseLife(1);
                 break;
             case EUpgrades.IncreaseSpeed:
-                PlayerController.ExtraMovementSpeedFactor = 0.1f;
+                PlayerController.ExtraMovementSpeedFactor = 0.2f;
                 break;
             case EUpgrades.BossDecreaseLife:
-                _boss.DowngradeBossLife(0.1f);
+                _boss.DowngradeBossLife(0.15f);
                 break;
             case EUpgrades.BossDecreaseSpeed:
+                Boss.DowngradeSpeedFactor = 0.2f;
                 break;
-            case EUpgrades.Every10FreezeBoss:
+            case EUpgrades.Every10HitBoss:
+                Boss.HasAutoHit = true;
                 break;
             case EUpgrades.Every10ShootExtra:
+                PlayerController.HasAutoHit = true;
                 break;
             case EUpgrades.IncreaseDistanceShoot:
                 Arrow.ExtraDurationVelocity = 0.5f;
+                break;
+            case EUpgrades.IncraseArrowNumber:
+                _player.IncreaseAmmo(1);
                 break;
         }
     }
@@ -371,7 +411,7 @@ public class ShopManager : MonoBehaviour
     public void OnOverChoice1()
     {
         _isOverChoice1 = true;
-        if (_upgradeChoice1.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice1).price > cash)
             currency.color = noCashColor;
     }
     public void OnOutChoice1()
@@ -384,22 +424,22 @@ public class ShopManager : MonoBehaviour
         if (_lockAnim)
             return;
 
-        if (_upgradeChoice1.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice1).price > cash)
         {
             GetComponent<UIShakeManager>().ApplyShake(5f, 0.05f);
             return;
         }
         
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
-        cash -= _upgradeChoice1.price;
+        cash -= GetUpgradeFromType(_upgradeChoice1).price;
         BuyUpgrade(_upgradeChoice1);
-        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
+        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, 1));
     }
     
     public void OnOverChoice2()
     {
         _isOverChoice2 = true;
-        if (_upgradeChoice2.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice2).price > cash)
             currency.color = noCashColor;
     }
     public void OnOutChoice2()
@@ -412,22 +452,22 @@ public class ShopManager : MonoBehaviour
         if (_lockAnim)
             return;
         
-        if (_upgradeChoice2.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice2).price > cash)
         {
             GetComponent<UIShakeManager>().ApplyShake(5f, 0.05f);
             return;
         }
         
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
-        cash -= _upgradeChoice2.price;
+        cash -= GetUpgradeFromType(_upgradeChoice2).price;
         BuyUpgrade(_upgradeChoice2);
-        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
+        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, 2));
     }
     
     public void OnOverChoice3()
     {
         _isOverChoice3 = true;
-        if (_upgradeChoice3.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice3).price > cash)
             currency.color = noCashColor;
     }
     public void OnOutChoice3()
@@ -440,16 +480,16 @@ public class ShopManager : MonoBehaviour
         if (_lockAnim)
             return;
         
-        if (_upgradeChoice3.price > cash)
+        if (GetUpgradeFromType(_upgradeChoice3).price > cash)
         {
             GetComponent<UIShakeManager>().ApplyShake(5f, 0.05f);
             return;
         }
         
         GetComponent<UIShakeManager>().ApplyImpulse(40f, 0.25f, Vector2.right);
-        cash -= _upgradeChoice3.price;
+        cash -= GetUpgradeFromType(_upgradeChoice3).price;
         BuyUpgrade(_upgradeChoice3);
-        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
+        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, 3));
     }
     
     public void OnOverLucky()
@@ -503,9 +543,9 @@ public class ShopManager : MonoBehaviour
         
         cash -= 4;
         GetComponent<UIShakeManager>().ApplyShake(10f, 0.1f);
-        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, _upgradeChoice1));
-        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, _upgradeChoice2));
-        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, _upgradeChoice3));
+        StartCoroutine(RerollChoice(choice1, _startLocalPosChoice1, fillChoice1, background1, iconChoice1, priceChoice1, descChoice1, 1));
+        StartCoroutine(RerollChoice(choice2, _startLocalPosChoice2, fillChoice2, background2, iconChoice2, priceChoice2, descChoice2, 2));
+        StartCoroutine(RerollChoice(choice3, _startLocalPosChoice3, fillChoice3, background3, iconChoice3, priceChoice3, descChoice3, 3));
     }
     
     public void OnOverCoffee()

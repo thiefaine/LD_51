@@ -1096,8 +1096,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   arrowPrefab: {fileID: 4330735493996821984, guid: e81d4c4960a3cf445829ed7e0301c4f1, type: 3}
-  maxAmmoArrows: 30
-  currentAmmoArrows: 30
+  maxAmmoArrows: 1
+  currentAmmoArrows: 1
 --- !u!114 &2660328325778737140
 MonoBehaviour:
   m_ObjectHideFlags: 0

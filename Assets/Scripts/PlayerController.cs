@@ -14,9 +14,13 @@ using Random = UnityEngine.Random;
 public class PlayerController : MonoBehaviour
 {
     // UPGRADES
-    public static float ExtraMovementSpeedFactor;
-    public static bool HasDash = true;
-    public static bool HasJump = true;
+    [Header("Upgrade")]
+    public static bool HasAutoHit = false;
+    private float _timerAutoHit = 10f;
+    
+    public static float ExtraMovementSpeedFactor = 0f;
+    public static bool HasDash = false;
+    public static bool HasJump = false;
     // UPGRADES
         
     public bool IsLock;
@@ -158,6 +162,34 @@ public class PlayerController : MonoBehaviour
         // _cursorDirection = (mousePos - transform.position);
         // _cursorDirection.Normalize();
         
+        if (HasAutoHit && !IsLock)
+        {
+            _timerAutoHit -= Time.deltaTime;
+            if (_timerAutoHit <= 0f)
+            {
+                _timerAutoHit = 10f;
+                
+                Boss boss = FindObjectOfType<Boss>();
+                Vector2 dirToBoss = boss.transform.position - transform.position;
+                Vector3 startPos = bowObject.transform.position;
+                startPos.z = 0f;
+                float a = Mathf.Atan2(dirToBoss.y, dirToBoss.x) * Mathf.Rad2Deg;
+                Quaternion rot = Quaternion.AngleAxis(a, Vector3.forward);
+                GameObject arrow = GameObject.Instantiate(arrowPrefab, startPos, rot);
+                float chargeRatio = 0.75f;
+                arrow.GetComponent<Arrow>().Shoot(dirToBoss, chargeRatio, false);
+            
+                bowFx.transform.SetParent(null);
+                bowFx.transform.position = bowObject.transform.position;
+                bowFx.transform.rotation = bowObject.transform.rotation;
+                bowFx.SetTrigger("Shoot");
+
+                float forceImpulse = Mathf.Lerp(0.03f, 0.1f, chargeRatio);
+                float durationImpulse = Mathf.Lerp(0.05f, 0.08f, chargeRatio);
+                Camera.main.GetComponent<CameraManager>().ApplyImpulse(forceImpulse, durationImpulse, -_cursorDirection);
+            }
+        }
+
         // IFrames
         if (_isInIFrames)
         {
@@ -341,6 +373,12 @@ public class PlayerController : MonoBehaviour
         _currentLife += value;
     }
 
+    public void IncreaseAmmo(int number)
+    {
+        maxAmmoArrows += number;
+        currentAmmoArrows += number;
+    }
+
     private void SetGaugeUIColor(Color col)
     {
         gaugeLeftPart.GetComponent<SpriteRenderer>().color = col;
@@ -397,7 +435,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (_isChargingBow)
         {
-            _currentArrow.GetComponent<Arrow>().Shoot(_cursorDirection, _chargingRatio);
+            _currentArrow.GetComponent<Arrow>().Shoot(_cursorDirection, _chargingRatio, true);
             currentAmmoArrows--;
             _currentArrow = null;
             _isChargingBow = false;
@@ -459,7 +497,12 @@ public class PlayerController : MonoBehaviour
             if (GetComponent<PlayerInput>().currentControlScheme == "Gamepad")
                 _directionAbility = _movementDirection;
             else
-                _directionAbility = _cursorDirection; // TODO check if ok
+            {
+                if (_movementDirection != Vector2.zero)
+                    _directionAbility = _movementDirection;
+                else
+                    _directionAbility = _cursorDirection;
+            }
             
             if (_directionAbility == Vector2.zero)
                 _directionAbility = Vector2.right;

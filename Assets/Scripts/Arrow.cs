@@ -11,6 +11,8 @@ public class Arrow : MonoBehaviour
     public static float ExtraDurationVelocity = 0f;
     public static float ExtraDamageFactor = 0f;
     // UPGRADES
+
+    private bool _stayOnGround = true;
     
     [Header("Velocity")]
     public float maxVelocity;
@@ -69,9 +71,13 @@ public class Arrow : MonoBehaviour
         
         if (_isLaunched && velocityMagnitude <= velocityThreshold)
             _isPickupable = true;
-        
+
         if (_isLaunched && !_isFreezing && _currentVelocity.magnitude <= 0.001f)
+        {
+            if (!_stayOnGround)
+                GameObject.DestroyImmediate(this.gameObject);
             _isOnGround = true;
+        }
 
         if (_isUnderBoss && _isOnGround)
             _currentVelocity = (transform.position - _boss.transform.position).normalized * minVelocity * Time.deltaTime;
@@ -80,12 +86,13 @@ public class Arrow : MonoBehaviour
         transform.position = nextPos;
     }
 
-    public void Shoot(Vector2 direction, float ratioForce)
+    public void Shoot(Vector2 direction, float ratioForce, bool stayOnGround)
     {
         _isOnGround = false;
         _isLaunched = true;
         _isPickupable = false;
         trail.enabled = true;
+        _stayOnGround = stayOnGround;
         _durationArrow = 0f;
         _currentDirection = direction;
         _ratioForce = ratioForce;
