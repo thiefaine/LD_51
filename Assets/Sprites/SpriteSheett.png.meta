@@ -494,6 +494,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: SpriteSheett_18
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 192
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 885b4e3ba3d7d4549a81db65f4ed198d
+      internalID: -214120984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -514,6 +535,7 @@ TextureImporter:
       SpriteSheett_17: 1970574958
       SpriteSheett_8: 63979719
       SpriteSheett_12: -433677221
+      SpriteSheett_18: -214120984
       SpriteSheett_14: -1080020226
       SpriteSheett_2: 453716325
       SpriteSheett_0: 1033246921
