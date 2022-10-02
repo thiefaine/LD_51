@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
     public GameObject shadow;
     public Color shadowColor;
     public Color shadowColorDash;
+    public AnimationCurve curveDashVelocity;
+    public float dashVelocityFactor;
     public float durationDash;
     public float dashCoolDown;
     public AnimationCurve curvePosDash;
@@ -182,7 +184,9 @@ public class PlayerController : MonoBehaviour
                 break;
             case EMoving.Dash:
                 _timerDash -= Time.deltaTime;
-                targetMovementVeloc = _directionDash * velocityFactor;
+                float dashRatio = Mathf.Clamp01(_timerDash / durationDash);
+                float speed = curveDashVelocity.Evaluate(dashRatio) * dashVelocityFactor; 
+                targetMovementVeloc = _directionDash * speed;
                 if (_timerDash <= 0f)
                 {
                     shadow.GetComponent<SpriteRenderer>().color = shadowColor;
@@ -227,7 +231,7 @@ public class PlayerController : MonoBehaviour
         if (_chargingRatio >= 1f || bowSprites.Count <= 1)
             index = bowSprites.Count - 1;
         else
-            index = (int)Mathf.Lerp(0, bowSprites.Count - 2, _chargingRatio);
+            index = (int)Mathf.Lerp(0, bowSprites.Count - 1, _chargingRatio);
         bowObject.GetComponentInChildren<SpriteRenderer>().sprite = bowSprites[index];
 
         // Arrow

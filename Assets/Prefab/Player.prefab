@@ -579,6 +579,31 @@ MonoBehaviour:
   shadow: {fileID: 7936766869010118635}
   shadowColor: {r: 0, g: 0, b: 0, a: 0.3254902}
   shadowColorDash: {r: 0, g: 0, b: 0, a: 0.12941177}
+  curveDashVelocity:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  dashVelocityFactor: 4
   durationDash: 0.5
   dashCoolDown: 1.5
   curvePosDash:
@@ -780,6 +805,7 @@ MonoBehaviour:
   bowSprites:
   - {fileID: 1320112755, guid: 9ea42b4e820ad8c4cacf4d06f70c0654, type: 3}
   - {fileID: 107077927, guid: 9ea42b4e820ad8c4cacf4d06f70c0654, type: 3}
+  - {fileID: -214120984, guid: 9ea42b4e820ad8c4cacf4d06f70c0654, type: 3}
   bowFx: {fileID: 7077184083293417757}
   bowDistanceToBody: 0.35
   speedCharging: 1.5
@@ -1033,7 +1059,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: -59728436, guid: 6299507c8aa41c847b23119726febd6c, type: 3}
+  m_Sprite: {fileID: 1320112755, guid: 9ea42b4e820ad8c4cacf4d06f70c0654, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
