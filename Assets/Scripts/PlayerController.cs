@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Schema;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -43,6 +44,21 @@ public class PlayerController : MonoBehaviour
     private bool _isMoving = false;
     private float _durationIsMoving = 0f;
     private EMoving _movingState = EMoving.Free;
+
+    [Header("Dash")]
+    public GameObject shadow;
+    public Color shadowColor;
+    public Color shadowColorDash;
+    public float durationDash;
+    public float dashCoolDown;
+    public AnimationCurve curvePosDash;
+    public AnimationCurve curveRotDash;
+    public float dashPosFactor;
+    public float dashRotFactor;
+    private float _timerDash = 0f;
+    private float _timerDashCoolDown = 0f;
+    private Vector2 _directionDash;
+    private bool _dashReady = true;
 
     [Header("I-Frame")]
     public float durationIFrames;
@@ -117,6 +133,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _currentLife = maxLife;
+        shadow.GetComponent<SpriteRenderer>().color = shadowColor;
     }
 
     // Update is called once per frame
@@ -146,6 +163,14 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+        // Dash
+        _timerDashCoolDown -= Time.deltaTime;
+        if (_timerDashCoolDown <= 0f && !_dashReady)
+        {
+            shadow.GetComponent<Animator>().SetTrigger("Trigger");
+            _dashReady = true;
+        }
+        
         // Movement
         float factor = Mathf.Lerp(velocityFactor, velocityFactorCharging, _chargingRatio); 
         Vector2 targetMovementVeloc = Vector2.zero;
@@ -156,7 +181,13 @@ public class PlayerController : MonoBehaviour
                 targetMovementVeloc = MathHelper.Damping(rb.velocity, _movementDirection * factor , Time.deltaTime, dampFactor);
                 break;
             case EMoving.Dash:
-                targetMovementVeloc = _cursorDirection * velocityFactor;
+                _timerDash -= Time.deltaTime;
+                targetMovementVeloc = _directionDash * velocityFactor;
+                if (_timerDash <= 0f)
+                {
+                    shadow.GetComponent<SpriteRenderer>().color = shadowColor;
+                    _movingState = EMoving.Free;
+                }
                 break;
             case EMoving.Imposed:
                 targetMovementVeloc = _imposedDirection * velocityFactor;
@@ -235,29 +266,40 @@ public class PlayerController : MonoBehaviour
         sprite.transform.localScale = scaleSquash;
         
         // bumpy
-        if (_isMoving)
+        if (_movingState == EMoving.Free)
         {
-            _durationIsMoving += Time.deltaTime;
-            sprite.transform.localPosition = new Vector2(0f, curvePosBumpy.Evaluate(_durationIsMoving * animBumpySpeed) - 0.25f);
-            float rot = Mathf.PingPong(_durationIsMoving * animRotSpeed, maxRotAngle) - (maxRotAngle * 0.5f);
-            sprite.transform.localRotation = Quaternion.Euler(0f, 0f, rot);
-
-            _timerDust += Time.deltaTime;
-            if (_timerDust >= durationDust)
+            if (_isMoving)
             {
-                _timerDust = 0f;
-                dustFx.transform.SetParent(null);
-                dustFx.transform.position = transform.position;
-                dustFx.transform.rotation = quaternion.Euler(0f, 0f, Random.Range(-180f, 180f));
-                dustFx.transform.localScale = Vector3.one * Random.Range(0.7f, 2f);
-                dustFx.SetTrigger("Play");
+                _durationIsMoving += Time.deltaTime;
+                sprite.transform.localPosition =
+                    new Vector2(0f, curvePosBumpy.Evaluate(_durationIsMoving * animBumpySpeed) - 0.25f);
+                float rot = Mathf.PingPong(_durationIsMoving * animRotSpeed, maxRotAngle) - (maxRotAngle * 0.5f);
+                sprite.transform.localRotation = Quaternion.Euler(0f, 0f, rot);
+
+                _timerDust += Time.deltaTime;
+                if (_timerDust >= durationDust)
+                {
+                    _timerDust = 0f;
+                    dustFx.transform.SetParent(null);
+                    dustFx.transform.position = transform.position;
+                    dustFx.transform.rotation = quaternion.Euler(0f, 0f, Random.Range(-180f, 180f));
+                    dustFx.transform.localScale = Vector3.one * Random.Range(0.7f, 2f);
+                    dustFx.SetTrigger("Play");
+                }
+            }
+            else
+            {
+                _durationIsMoving = Mathf.Max(_durationIsMoving - Time.deltaTime, 0f);
+                sprite.transform.localPosition = MathHelper.Damping(sprite.transform.localPosition,
+                    new Vector2(0f, -0.25f), Time.deltaTime, 0.25f);
+                sprite.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
             }
         }
-        else
+        else if (_movingState == EMoving.Dash)
         {
-            _durationIsMoving = Mathf.Max(_durationIsMoving - Time.deltaTime, 0f);
-            sprite.transform.localPosition = MathHelper.Damping(sprite.transform.localPosition, new Vector2(0f, -0.25f), Time.deltaTime, 0.25f);
-            sprite.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            float ratioDash = Mathf.Clamp01(_timerDash / durationDash);
+            sprite.transform.localPosition = new Vector3(0f, (curvePosDash.Evaluate(ratioDash) * dashPosFactor) - 0.25f, 0f);
+            sprite.transform.RotateAround(Vector3.forward, curveRotDash.Evaluate(ratioDash) * dashRotFactor);
         }
     }
 
@@ -327,7 +369,7 @@ public class PlayerController : MonoBehaviour
 
     public void Damage()
     {
-        if (_isInIFrames)
+        if (_isInIFrames || _movingState == EMoving.Dash)
             return;
 
         _isInIFrames = true;
@@ -339,6 +381,21 @@ public class PlayerController : MonoBehaviour
 
     public void OnDash()
     {
+        if (_timerDashCoolDown > 0f)
+            return;
+            
         // nothing for the moment
+        _movingState = EMoving.Dash;
+        _timerDash = durationDash;
+        _timerDashCoolDown = dashCoolDown;
+        _dashReady = false;
+
+        shadow.GetComponent<SpriteRenderer>().color = shadowColorDash;
+        _directionDash = _movementDirection;
+        if (_directionDash == Vector2.zero)
+            _directionDash = _cursorDirection;
+        if (_directionDash == Vector2.zero)
+            _directionDash = Vector2.right;
+        _directionDash.Normalize();
     }
 }

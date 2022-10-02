@@ -296,13 +296,13 @@ public class Boss : MonoBehaviour
         {
             Vector3 nextPosPlayer = _playerInput.transform.position + new Vector3(playerRb.velocity.x, playerRb.velocity.y, 0f) * 0.5f;
             Vector2 dir = (nextPosPlayer - transform.position).normalized;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
-                bul.GetComponent<Bullet>().Shoot(dir, 7f);
+                bul.GetComponent<Bullet>().Shoot(dir, 9f);
                 yield return new WaitForSeconds(0.1f);
             }
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
         }
         
         yield return new WaitForEndOfFrame();
