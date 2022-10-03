@@ -72,7 +72,7 @@ public class Arrow : MonoBehaviour
         if (_isLaunched && velocityMagnitude <= velocityThreshold)
             _isPickupable = true;
 
-        if (_isLaunched && !_isFreezing && _currentVelocity.magnitude <= 0.001f)
+        if (_isLaunched && Time.timeScale > 0.5f && _currentVelocity.magnitude <= 0.001f)
         {
             if (!_stayOnGround)
                 GameObject.DestroyImmediate(this.gameObject);

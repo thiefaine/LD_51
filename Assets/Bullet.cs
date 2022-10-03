@@ -61,19 +61,15 @@ public class Bullet : MonoBehaviour
         
         // Boss case
         PlayerController player = col.GetComponent<PlayerController>();
-        if (player && player.LifeRatio > 0f)
-        {
+        if (player)
             player.Damage();
-            Camera.main.GetComponent<CameraManager>().ApplyShake(0.01f, 0.08f);
-        }
         
-        // Walls case
         Wall wall = col.GetComponent<Wall>();
-        if (wall)
-            StartCoroutine(HitWall());
+        if (wall || player)
+            StartCoroutine(DestroyAnimated());
     }
 
-    private IEnumerator HitWall()
+    private IEnumerator DestroyAnimated()
     {
         _speed = 0f;
         animator.SetTrigger("HitWall");

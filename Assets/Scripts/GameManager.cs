@@ -10,8 +10,11 @@ public class GameManager : MonoBehaviour
 {
     public GameObject cursor;
     public Image spriteFade;
-    public SpriteRenderer text;
+    public GameObject textPart1;
+    public GameObject textPart2;
     public ShopManager shop;
+    public float durationTextBeforeCharge;
+    public float durationChargeBeforeShop;
 
     private PlayerInput _playerInput;
     private PlayerController _player;
@@ -59,20 +62,21 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartGame()
     {
-        text.gameObject.SetActive(false);
+        textPart1.gameObject.SetActive(false);
         
-        yield return new WaitForSecondsRealtime(1f);
+        yield return new WaitForSecondsRealtime(0.75f);
         
-        text.gameObject.SetActive(true);
+        textPart1.gameObject.SetActive(true);
         
-        yield return new WaitForSecondsRealtime(2.5f);
+        yield return new WaitForSecondsRealtime(durationTextBeforeCharge);
         
         _boss.GetComponentInChildren<Animator>().SetBool("Charging", true);
         
-        yield return new WaitForSecondsRealtime(2.5f);
+        yield return new WaitForSecondsRealtime(durationChargeBeforeShop);
         
         Time.timeScale = 0f;
-        text.gameObject.SetActive(false);
+        textPart1.gameObject.SetActive(false);
+        textPart2.gameObject.SetActive(true);
         shop.gameObject.SetActive(true);
     }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -86,9 +87,10 @@ public class Boss : MonoBehaviour
             IsLock = true;
             return;
         }
-        
+
         // squash - stretch
         Vector2 scaleSquash = new Vector2(curveScaleX.Evaluate(Time.time * scaleSpeed), curveScaleY.Evaluate(Time.time * scaleSpeed));
+        Debug.Log("sayqs : " + scaleSquash);
         sprite.transform.localScale = scaleSquash;
         
         // brain

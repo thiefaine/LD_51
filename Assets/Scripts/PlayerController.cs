@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private float _timerAutoHit = 10f;
     
     public static float ExtraMovementSpeedFactor = 0f;
-    public static bool HasDash = false;
+    public static bool HasDash = true;
     public static bool HasJump = false;
     // UPGRADES
         
@@ -75,14 +76,17 @@ public class PlayerController : MonoBehaviour
     private float _timerDash = 0f;
 
     [Header("I-Frame")]
+    public Color colorHitIframes;
     public float durationIFrames;
+    public float durationIFramesEffect;
     public float durationBlink;
     private bool _isInIFrames = false;
     private float _timerIFrames = 0f;
+    private float _timerIFramesEffect = 0f;
     private float _timerBlink = 0f;
 
     [Header("Animation")]
-    public GameObject sprite;
+    public SpriteRenderer sprite;
     public Animator dustFx;
     public float durationDust;
     private float _timerDust = 0f;
@@ -156,7 +160,7 @@ public class PlayerController : MonoBehaviour
         {
             IsLock = true;
             rb.velocity = Vector2.zero;
-            sprite.GetComponent<SpriteRenderer>().color = Color.red;
+            sprite.color = Color.red;
             return;
         }
         
@@ -197,19 +201,27 @@ public class PlayerController : MonoBehaviour
         {
             _timerBlink -= Time.deltaTime;
             _timerIFrames -= Time.deltaTime;
+            _timerIFramesEffect -= Time.deltaTime;
 
-            if (_timerBlink <= 0f)
+            if (_timerIFramesEffect > 0f)
             {
-                _timerBlink = durationBlink;
-                SpriteRenderer spr = sprite.GetComponent<SpriteRenderer>();
-                spr.enabled = !spr.enabled;
+                if (_timerBlink <= 0f)
+                {
+                    _timerBlink = durationBlink;
+                    sprite.enabled = !sprite.enabled;
+                }
+            }
+            else
+            {
+                sprite.enabled = true;
             }
 
+            // TODO Extra Iframe 
             if (_timerIFrames <= 0f)
-            {
-                sprite.GetComponent<SpriteRenderer>().enabled = true;
                 _isInIFrames = false;
-            }
+
+            float ratio = 1f - Mathf.Clamp01(_timerIFramesEffect / durationIFramesEffect);
+            sprite.color = Color.Lerp(colorHitIframes, Color.white, ratio);
         }
         
         // Dash
@@ -459,14 +471,17 @@ public class PlayerController : MonoBehaviour
         if (IsLock)
             return;
         
-        if (_isInIFrames || _isJumping)
+        if (_isInIFrames || _isJumping || _currentLife <= 0f)
             return;
 
         _isInIFrames = true;
         _timerBlink = durationBlink;
         _timerIFrames = durationIFrames;
+        _timerIFramesEffect = durationIFramesEffect;
         
         _currentLife = Mathf.Max(_currentLife - 1, 0);
+        Camera.main.GetComponent<CameraManager>().ApplyShake(0.08f, 0.12f);
+        StartCoroutine(FreezeFrame(0.15f));
     }
 
     public void OnDash()
@@ -510,5 +525,14 @@ public class PlayerController : MonoBehaviour
                 _directionAbility = Vector2.right;
             _directionAbility.Normalize();
         }
+    }
+    
+    private IEnumerator FreezeFrame(float duration)
+    {
+        Time.timeScale = 0f;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        Time.timeScale = 1f;
     }
 }
