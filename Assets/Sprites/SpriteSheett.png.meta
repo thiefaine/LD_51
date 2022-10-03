@@ -599,6 +599,90 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: SpriteSheett_23
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 336
+        height: 192
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 820f8e0f82e9f0446895d2a8db6c23b1
+      internalID: 871879763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpriteSheett_24
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 192
+        width: 336
+        height: 192
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdeeb7c833a15d445b052ddfb0a3850e
+      internalID: -1039847170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpriteSheett_25
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 336
+        height: 192
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59445ab0050431e43ae3f47461331b29
+      internalID: -923094912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpriteSheett_26
+      rect:
+        serializedVersion: 2
+        x: 528
+        y: 0
+        width: 336
+        height: 192
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8919f26a33420f44b8c733f00f03651
+      internalID: -1399386649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -617,13 +701,17 @@ TextureImporter:
       SpriteSheett_9: 1350540543
       SpriteSheett_10: 602088335
       SpriteSheett_11: 1547166088
+      SpriteSheett_25: -1099454166
+      SpriteSheett_26: -923094912
       SpriteSheett_3: 1483068370
       SpriteSheett_19: -1140009320
       SpriteSheett_17: 1970574958
       SpriteSheett_8: 63979719
+      SpriteSheett_24: -1039847170
       SpriteSheett_12: -433677221
       SpriteSheett_18: -214120984
       SpriteSheett_21: 1454380660
+      SpriteSheett_23: 871879763
       SpriteSheett_14: -1080020226
       SpriteSheett_2: 453716325
       SpriteSheett_0: 1033246921
