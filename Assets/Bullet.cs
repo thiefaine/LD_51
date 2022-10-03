@@ -15,6 +15,7 @@ public class Bullet : MonoBehaviour
     private float _speed;
     private Vector2 _currentVelocity;
     private Vector2 _currentDirection;
+    private bool _isDestroying = false;
     
     private List<Collider2D> _insideColliders = new List<Collider2D>();
     
@@ -54,7 +55,7 @@ public class Bullet : MonoBehaviour
     
     public void OnTriggerStay2D(Collider2D col)
     {
-        if (_insideColliders.Contains(col))
+        if (_insideColliders.Contains(col) || _isDestroying)
             return;
         
         _insideColliders.Add(col);
@@ -71,6 +72,7 @@ public class Bullet : MonoBehaviour
 
     private IEnumerator DestroyAnimated()
     {
+        _isDestroying = true;
         _speed = 0f;
         animator.SetTrigger("HitWall");
 

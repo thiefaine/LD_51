@@ -168,7 +168,6 @@ public class PlayerController : MonoBehaviour
         {
             IsLock = true;
             rb.velocity = Vector2.zero;
-            sprite.color = Color.red;
             return;
         }
         
@@ -516,6 +515,7 @@ public class PlayerController : MonoBehaviour
         if (_isDead)
             return;
 
+        spriteAnimator.enabled = true;
         spriteAnimator.SetTrigger("Death");
         _isDead = true;
         IsLock = true;

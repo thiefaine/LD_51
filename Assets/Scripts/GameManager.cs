@@ -103,7 +103,8 @@ public class GameManager : MonoBehaviour
         _player.IsLock = true;
         _boss.IsLock = true;
 
-        victory.SetActive(true);
+        if (_player.LifeRatio > 0f)
+            victory.SetActive(true);
 
         float durationWait = _player.LifeRatio > 0f ? 4f : 0.5f;
         yield return new WaitForSecondsRealtime(durationWait); // 1.5f
