@@ -138,6 +138,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 8072613022544763334, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 519420031}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -222,19 +226,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8072613024389273214, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 28.299988
+      objectReference: {fileID: 0}
+    - target: {fileID: 8072613024389273214, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -66.100006
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
---- !u!114 &372057005 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1731560529871518950, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
-  m_PrefabInstance: {fileID: 372057004}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,6 +497,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -543,6 +556,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 738641925822822193, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 519420031}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b36062fe6047474192a402d362ed599, type: 3}
 --- !u!1001 &1524986657220326387
@@ -613,10 +630,6 @@ PrefabInstance:
       propertyPath: shop
       value: 
       objectReference: {fileID: 1718009123}
-    - target: {fileID: 1551975464360586490, guid: 8cc2f81eb92ab684bb45f5e1b7df900e, type: 3}
-      propertyPath: spriteFade
-      value: 
-      objectReference: {fileID: 372057005}
     - target: {fileID: 1551975464360586491, guid: 8cc2f81eb92ab684bb45f5e1b7df900e, type: 3}
       propertyPath: m_Name
       value: GameManager

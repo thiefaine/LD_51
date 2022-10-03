@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
+using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -9,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public GameObject cursor;
-    public Image spriteFade;
+    public SpriteRenderer spriteFade;
     public GameObject textPart1;
     public GameObject textPart2;
     public ShopManager shop;
@@ -88,8 +89,6 @@ public class GameManager : MonoBehaviour
         _player.IsLock = true;
         _boss.IsLock = true;
 
-        Time.timeScale = 0f;
-        
         yield return new WaitForSecondsRealtime(1.5f);
         
         while (timer > 0f)
@@ -100,6 +99,7 @@ public class GameManager : MonoBehaviour
             Time.timeScale = Mathf.Lerp(1f, 0f, ratio);
             Color col = spriteFade.color;
             col.a = Mathf.Lerp(1f, 0f, ratio);
+            Debug.Log(ratio);
             spriteFade.color = col;
             yield return new WaitForEndOfFrame();
         }
@@ -107,7 +107,6 @@ public class GameManager : MonoBehaviour
         spriteFade.color = Color.black;
         yield return new WaitForSecondsRealtime(0.5f);
 
-        Time.timeScale = 0f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

@@ -1124,9 +1124,9 @@ Canvas:
   m_GameObject: {fileID: 8072613022544763331}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 4
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -1134,7 +1134,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 19
   m_TargetDisplay: 0
 --- !u!114 &8072613022544763329
 MonoBehaviour:
@@ -1191,8 +1191,8 @@ MonoBehaviour:
   playerIcon: {fileID: 5896655051383922542}
   bossLife: {fileID: 8072613023051370138}
   arrowImage: {fileID: 8072613024389273215}
-  offsetPlayerIcon: 40
-  offsetArrows: 25
+  offsetPlayerIcon: 0.85
+  offsetArrows: 0.6
   upgrades:
   - {fileID: 7573216325854479030}
   - {fileID: 4700301258850269903}

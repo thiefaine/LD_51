@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     private float _timerAutoHit = 10f;
     
     public static float ExtraMovementSpeedFactor = 0f;
-    public static bool HasDash = true;
+    public static bool HasDash = false;
     public static bool HasJump = false;
     // UPGRADES
         
