@@ -48,7 +48,7 @@ public class ShopManager : MonoBehaviour
 
     [Header("Panel")]
     public Image panel;
-    private HUDManager _hud;
+    private UIManager _ui;
     
     [Header("Currency")]
     public TextMeshProUGUI currency;
@@ -129,7 +129,7 @@ public class ShopManager : MonoBehaviour
         _gameManager = FindObjectOfType<GameManager>();
         _player = FindObjectOfType<PlayerController>();
         _boss = FindObjectOfType<Boss>();
-        _hud = FindObjectOfType<HUDManager>();
+        _ui = FindObjectOfType<UIManager>();
         
         _player.IsLock = true;
         _boss.IsLock = true;
@@ -273,6 +273,7 @@ public class ShopManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.2f);
         
         _boss.GetComponentInChildren<Animator>().SetBool("Charging", false);
+        FindObjectOfType<GameManager>().textPart2.SetActive(false);
         gameObject.SetActive(false);
     }
 
@@ -401,14 +402,14 @@ public class ShopManager : MonoBehaviour
                 PlayerController.HasAutoHit = true;
                 break;
             case EUpgrades.IncreaseDistanceShoot:
-                Arrow.ExtraDurationVelocity = 0.5f;
+                Arrow.ExtraDurationVelocity = 1f;
                 break;
             case EUpgrades.IncraseArrowNumber:
                 _player.IncreaseAmmo(3);
                 break;
         }
         
-        _hud.SetImage(GetUpgradeFromType(type).sprite, _chosenUpgradesType.Count - 1);
+        _ui.SetImage(GetUpgradeFromType(type).sprite, _chosenUpgradesType.Count - 1);
         StartCoroutine(Real());
     }
 
