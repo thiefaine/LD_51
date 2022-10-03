@@ -24,8 +24,10 @@ public class Boss : MonoBehaviour
     {
         get { return Mathf.Clamp01(_currentLife / maxLife); }
     }
-    
+    private bool _isDead = false;
+
     [Header("Animation")]
+    public Animator animator;
     public GameObject sprite;
     
     [Header("Stretch - squash")]
@@ -81,16 +83,11 @@ public class Boss : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_currentLife <= 0f)
-        {
-            GetComponentInChildren<Animator>().SetTrigger("Death");
-            IsLock = true;
+        if (_isDead)
             return;
-        }
 
         // squash - stretch
         Vector2 scaleSquash = new Vector2(curveScaleX.Evaluate(Time.time * scaleSpeed), curveScaleY.Evaluate(Time.time * scaleSpeed));
-        Debug.Log("sayqs : " + scaleSquash);
         sprite.transform.localScale = scaleSquash;
         
         // brain
@@ -108,6 +105,16 @@ public class Boss : MonoBehaviour
         }
         
         UpdateState();
+    }
+
+    public void SetDeath()
+    {
+        if (_isDead)
+            return;
+
+        animator.SetTrigger("Death");
+        _isDead = true;
+        IsLock = true;
     }
 
     public void DowngradeBossLife(float factor)
@@ -260,6 +267,8 @@ public class Boss : MonoBehaviour
         {
             for (int i = 0; i < max; i++)
             {
+                if (_isDead)
+                    continue;
                 float angle = i * offsetAngle + j * offsetAngle * 0.33f;
                 Vector3 dir = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
@@ -291,6 +300,8 @@ public class Boss : MonoBehaviour
         int maxJ = 30;
         for (int j = 0; j < maxJ; j++)
         {
+            if (_isDead)
+                continue;
             float r = curveZigZag.Evaluate(Mathf.Clamp01((float)j / (float)maxJ));
             Vector2 dir = Vector2.Lerp(topDir, bottomDir, r);
             GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
@@ -315,6 +326,8 @@ public class Boss : MonoBehaviour
         
         for (int j = 0; j < 60; j++)
         {
+            if (_isDead)
+                continue;
             float angle = Random.Range(0f, 360f);
             Vector3 dir = Random.insideUnitCircle.normalized;
             GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
@@ -344,6 +357,8 @@ public class Boss : MonoBehaviour
             Vector2 dir = (nextPosPlayer - transform.position).normalized;
             for (int i = 0; i < 3; i++)
             {
+                if (_isDead)
+                    continue;
                 GameObject bul = GameObject.Instantiate(bullet, transform.position, Quaternion.identity);
                 float speed = 7.5f;
                 speed -= speed * DowngradeSpeedFactor;
@@ -377,9 +392,7 @@ public class Boss : MonoBehaviour
             _currentLife = Mathf.Max(_currentLife - damages, 0f);
             
             if (_currentLife <= 0f)
-            {
-                // TODO dead !!
-            }
+                SetDeath();
         }
     }
 }

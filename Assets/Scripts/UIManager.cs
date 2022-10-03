@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < _maxAmmoUI; i++)
         {
             var img = GameObject.Instantiate(arrowImage.gameObject, arrowImage.transform.position, arrowImage.transform.rotation, arrowImage.transform.parent);
-            img.transform.position = arrowImage.transform.position + new Vector3(i * offsetArrows, 0f, 0f);
+            img.transform.localPosition = arrowImage.transform.localPosition + new Vector3(i * offsetArrows, 0f, 0f);
             img.SetActive(false);
             _arrowAmmos.Add(img.GetComponent<Image>());
         }
@@ -39,7 +39,8 @@ public class UIManager : MonoBehaviour
         for (int i = 0; i < _maxLifePlayer; i++)
         {
             Vector3 offset = new Vector3(i * offsetPlayerIcon, 0f, 0f);
-            GameObject icon = GameObject.Instantiate(playerIcon.gameObject, playerIcon.transform.position + offset, playerIcon.transform.rotation, playerIcon.transform.parent);
+            GameObject icon = GameObject.Instantiate(playerIcon.gameObject, playerIcon.transform.position, playerIcon.transform.rotation, playerIcon.transform.parent);
+            icon.transform.localPosition = playerIcon.transform.localPosition + offset;
             _playerIcons.Add(icon.GetComponent<Image>());
         }
         

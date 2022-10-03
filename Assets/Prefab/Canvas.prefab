@@ -518,6 +518,39 @@ MonoBehaviour:
     description: Shoot an extra arrow every 10s
     forPlayer: 1
     sprite: {fileID: -184321652, guid: b1af973349f928c4d83ae4afdd4bc86b, type: 3}
+  timescaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 12.22644
+      outSlope: 12.22644
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.1444523
+    - serializedVersion: 3
+      time: 0.20461205
+      value: 1.0036011
+      inSlope: -0.12225821
+      outSlope: -0.12225821
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.16750759
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -3.7044938
+      outSlope: -3.7044938
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.05712765
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   panel: {fileID: 2978848049170360840}
   currency: {fileID: 738641925906075903}
   noCashColor: {r: 0.7058824, g: 0, b: 0, a: 1}

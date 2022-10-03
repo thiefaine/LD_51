@@ -36,7 +36,6 @@ public class Arrow : MonoBehaviour
     private bool _isLaunched = false;
     private bool _isOnGround = false;
     private bool _isPickupable = false;
-    private bool _isFreezing = false;
     private bool _isUnderBoss = false;
     private Boss _boss;
     public bool IsOnGround { get { return _isOnGround; } }
@@ -69,7 +68,7 @@ public class Arrow : MonoBehaviour
         _currentVelocity = GetVelocityWithRatio(ratioDuration);
         float velocityMagnitude = _currentVelocity.magnitude;
         
-        if (_isLaunched && velocityMagnitude <= velocityThreshold)
+        if (_isLaunched && velocityMagnitude <= velocityThreshold && Time.timeScale > 0.5f)
             _isPickupable = true;
 
         if (_isLaunched && Time.timeScale > 0.5f && _currentVelocity.magnitude <= 0.001f)
@@ -130,7 +129,7 @@ public class Arrow : MonoBehaviour
 
                 float damages = Mathf.Lerp(minDamage, maxDamage, _ratioForce);
                 damages += damages * ExtraDamageFactor;
-                
+
                 if (_currentVelocity.magnitude <= velocityThreshold)
                     damages = 0f;
                 
@@ -167,12 +166,8 @@ public class Arrow : MonoBehaviour
 
     private IEnumerator FreezeFrame(float duration)
     {
-        _isFreezing = true;
         Time.timeScale = 0f;
-
         yield return new WaitForSecondsRealtime(duration);
-
         Time.timeScale = 1f;
-        _isFreezing = false;
     }
 }

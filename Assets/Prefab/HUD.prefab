@@ -1191,8 +1191,8 @@ MonoBehaviour:
   playerIcon: {fileID: 5896655051383922542}
   bossLife: {fileID: 8072613023051370138}
   arrowImage: {fileID: 8072613024389273215}
-  offsetPlayerIcon: 0.85
-  offsetArrows: 0.6
+  offsetPlayerIcon: 40
+  offsetArrows: 25
   upgrades:
   - {fileID: 7573216325854479030}
   - {fileID: 4700301258850269903}

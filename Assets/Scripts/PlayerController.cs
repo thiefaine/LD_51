@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 using System.Collections;
+using Mono.Cecil.Cil;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 
 public class PlayerController : MonoBehaviour
 {
@@ -38,6 +40,8 @@ public class PlayerController : MonoBehaviour
     {
         get { return Mathf.Clamp01((float)_currentLife / (float)maxLife); }
     }
+    private bool _isDead = false;
+    private bool _isVictorious = false;
 
     [Header("Moving")]
     public Rigidbody2D rb;
@@ -68,8 +72,9 @@ public class PlayerController : MonoBehaviour
     public float durationJump;
     private float _timerJump = 0f;
     private bool _isJumping = false;
-    
+
     [Header("Dash")]
+    public TrailRenderer trail;
     public AnimationCurve curveDashVelocity;
     public float dashVelocityFactor;
     public float durationDash;
@@ -88,6 +93,8 @@ public class PlayerController : MonoBehaviour
     [Header("Animation")]
     public SpriteRenderer sprite;
     public Animator dustFx;
+    public Animator spriteAnimator;
+    public Animator shadowAnimator;
     public float durationDust;
     private float _timerDust = 0f;
     
@@ -150,17 +157,35 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        spriteAnimator.enabled = false;
         _currentLife = maxLife;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_currentLife <= 0f)
+        if (_isDead)
         {
             IsLock = true;
             rb.velocity = Vector2.zero;
             sprite.color = Color.red;
+            return;
+        }
+        
+        // Anim
+        // sqash
+        Vector2 scaleSquash = new Vector2(curveScaleX.Evaluate(Time.time * scaleSpeed), curveScaleY.Evaluate(Time.time * scaleSpeed));
+        sprite.transform.localScale = scaleSquash;
+
+        float targetTrail = _timerDash > 0f ? 0.5f : 0f;
+        trail.time = MathHelper.Damping(trail.time, targetTrail, Time.deltaTime, 0.1f);
+
+        if (GameManager.GameEnded)
+        {
+            IsLock = true;
+            rb.velocity = Vector2.zero;
+            if (!_isVictorious)
+                SetVictory();
             return;
         }
         
@@ -215,8 +240,7 @@ public class PlayerController : MonoBehaviour
             {
                 sprite.enabled = true;
             }
-
-            // TODO Extra Iframe 
+            
             if (_timerIFrames <= 0f)
                 _isInIFrames = false;
 
@@ -228,7 +252,7 @@ public class PlayerController : MonoBehaviour
         _timerAbilityCoolDown -= Time.deltaTime;
         if (_timerAbilityCoolDown <= 0f && !_abilityReady)
         {
-            shadow.GetComponent<Animator>().SetTrigger("Trigger");
+            shadowAnimator.SetTrigger("Trigger");
             _abilityReady = true;
         }
         
@@ -256,12 +280,10 @@ public class PlayerController : MonoBehaviour
                     targetMovementVeloc = _directionAbility * speed;
                 } else 
                     targetMovementVeloc = defaultVeloc;
-
-                if (_timerDash <= 0f)
-                    GetComponent<Animator>().SetBool("Dashing", false);
+                
                 if (_timerJump <= 0f)
                 {
-                    shadow.GetComponent<Animator>().SetBool("Jumping", false);
+                    shadowAnimator.SetBool("Jumping", false);
                     _isJumping = false;
                 }
                 if (_timerDash <= 0f && _timerJump <= 0f)
@@ -338,11 +360,6 @@ public class PlayerController : MonoBehaviour
             SetGaugeUIColor(Color.white);
         }
 
-        // Anim
-        // sqash
-        Vector2 scaleSquash = new Vector2(curveScaleX.Evaluate(Time.time * scaleSpeed), curveScaleY.Evaluate(Time.time * scaleSpeed));
-        sprite.transform.localScale = scaleSquash;
-        
         // bumpy
         if (_movingState == EMoving.Free)
         {
@@ -379,6 +396,13 @@ public class PlayerController : MonoBehaviour
             sprite.transform.localPosition = new Vector3(0f, (curvePosDash.Evaluate(ratioDash) * dashPosFactor) - 0.25f, 0f);
             sprite.transform.RotateAround(Vector3.forward, curveRotDash.Evaluate(ratioDash) * dashRotFactor);
         }
+    }
+
+    private void SetVictory()
+    {
+        _isVictorious = true;
+        spriteAnimator.enabled = true;
+        spriteAnimator.SetTrigger("Victory");
     }
 
     public void IncreaseLife(int value)
@@ -471,7 +495,7 @@ public class PlayerController : MonoBehaviour
         if (IsLock)
             return;
         
-        if (_isInIFrames || _isJumping || _currentLife <= 0f)
+        if (_isInIFrames || _isJumping || _isDead)
             return;
 
         _isInIFrames = true;
@@ -482,6 +506,19 @@ public class PlayerController : MonoBehaviour
         _currentLife = Mathf.Max(_currentLife - 1, 0);
         Camera.main.GetComponent<CameraManager>().ApplyShake(0.08f, 0.12f);
         StartCoroutine(FreezeFrame(0.15f));
+
+        if (_currentLife <= 0f)
+            SetDeath();
+    }
+    
+    public void SetDeath()
+    {
+        if (_isDead)
+            return;
+
+        spriteAnimator.SetTrigger("Death");
+        _isDead = true;
+        IsLock = true;
     }
 
     public void OnDash()
@@ -489,7 +526,7 @@ public class PlayerController : MonoBehaviour
         if (IsLock)
             return;
         
-        if (!HasJump && !HasDash || (_timerAbilityCoolDown > 0))
+        if ((!HasJump && !HasDash) || _timerAbilityCoolDown > 0)
             return;
             
         // nothing for the moment
@@ -498,14 +535,11 @@ public class PlayerController : MonoBehaviour
         _abilityReady = false;
 
         if (HasDash)
-        {
             _timerDash = durationDash;
-            GetComponent<Animator>().SetBool("Dashing", true);
-        }
         if (HasJump)
         {
             _timerJump = durationJump;
-            shadow.GetComponent<Animator>().SetBool("Jumping", true);
+            shadowAnimator.SetBool("Jumping", true);
             _isJumping = true;
         }
 

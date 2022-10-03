@@ -797,7 +797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsLock: 0
-  maxLife: 50
+  maxLife: 3
   rb: {fileID: 8074095387950248544}
   velocityFactor: 2.5
   velocityFactorCharging: 1.25
@@ -901,6 +901,7 @@ MonoBehaviour:
   dashPosFactor: 0.6
   dashRotFactor: 0.08
   durationJump: 0.4
+  trail: {fileID: 8578512749774017806}
   curveDashVelocity:
     serializedVersion: 2
     m_Curve:
@@ -933,6 +934,8 @@ MonoBehaviour:
   durationBlink: 0.1
   sprite: {fileID: 8074095389667206048}
   dustFx: {fileID: 7776420282207140288}
+  spriteAnimator: {fileID: 3743606473619754776}
+  shadowAnimator: {fileID: 3866784608437653744}
   durationDust: 0.8
   curveScaleX:
     serializedVersion: 2
@@ -1222,7 +1225,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8074095387950248546}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 017470ec560552749806ab6b7d6918c4, type: 2}
   m_CullingMode: 0

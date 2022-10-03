@@ -46,6 +46,8 @@ public class ShopManager : MonoBehaviour
     private PlayerController _player;
     private Boss _boss;
 
+    public AnimationCurve timescaleCurve;
+
     [Header("Panel")]
     public Image panel;
     private UIManager _ui;
@@ -260,8 +262,13 @@ public class ShopManager : MonoBehaviour
             gaugePreview.fillAmount = MathHelper.Damping(gaugePreview.fillAmount, 0f, Time.unscaledDeltaTime, 0.05f);
             
             timer -= Time.unscaledDeltaTime;
+            
+            if (ratio >= 0.8f)
+                _gameManager.textPart2.SetActive(false);
+            
             yield return new WaitForEndOfFrame();
         }
+        
 
         yield return new WaitForSecondsRealtime(0.5f);
 
@@ -273,7 +280,6 @@ public class ShopManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.2f);
         
         _boss.GetComponentInChildren<Animator>().SetBool("Charging", false);
-        FindObjectOfType<GameManager>().textPart2.SetActive(false);
         gameObject.SetActive(false);
     }
 
@@ -420,18 +426,8 @@ public class ShopManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         
         Time.timeScale = 1f;
-        // float duration = 1f;
-        // float timer = duration;
-        // while (timer > 0f)
-        // {
-        //     timer -= Time.unscaledDeltaTime;
-        //
-        //     float ratio = Mathf.Clamp01(timer / duration);
-        //     Debug.Log(ratio);
-        //     Time.timeScale = ratio;
-        // }
         
-        yield return new WaitForSecondsRealtime(0.4f);
+        yield return new WaitForSecondsRealtime(0.75f);
         
         Time.timeScale = 0f;
     }

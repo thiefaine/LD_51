@@ -9,10 +9,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static bool GameEnded = false;
+    
     public GameObject cursor;
     public SpriteRenderer spriteFade;
     public GameObject textPart1;
     public GameObject textPart2;
+    public GameObject victory;
     public ShopManager shop;
     public float durationTextBeforeCharge;
     public float durationChargeBeforeShop;
@@ -20,6 +23,7 @@ public class GameManager : MonoBehaviour
     private PlayerInput _playerInput;
     private PlayerController _player;
     private Boss _boss;
+    private bool _isEnding = false;
     
     private void Awake()
     {
@@ -29,6 +33,16 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        PlayerController.HasDash = false;
+        PlayerController.HasJump = false;
+        PlayerController.HasAutoHit = false;
+        PlayerController.ExtraMovementSpeedFactor = 0f;
+
+        Boss.DowngradeSpeedFactor = 0f;
+        Boss.HasAutoHit = false;
+
+        GameEnded = false; 
+        
         _playerInput = FindObjectOfType<PlayerInput>();
         _player = FindObjectOfType<PlayerController>();
         _boss = FindObjectOfType<Boss>();
@@ -55,10 +69,8 @@ public class GameManager : MonoBehaviour
         pos.z = 1f;
         cursor.transform.position = pos;
 
-        if (_player.LifeRatio <= 0f || _boss.LifeRatio <= 0f)
-        {
+        if (!_isEnding && (_player.LifeRatio <= 0f || _boss.LifeRatio <= 0f))
             StartCoroutine(EndGame());
-        }
     }
 
     private IEnumerator StartGame()
@@ -83,23 +95,27 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EndGame()
     {
-        float duration = 3f;
+        _isEnding = true;
+        float duration = 2f;
         float timer = duration;
 
+        GameEnded = true;
         _player.IsLock = true;
         _boss.IsLock = true;
 
-        yield return new WaitForSecondsRealtime(1.5f);
+        victory.SetActive(true);
+
+        float durationWait = _player.LifeRatio > 0f ? 4f : 0.5f;
+        yield return new WaitForSecondsRealtime(durationWait); // 1.5f
         
         while (timer > 0f)
         {
             timer -= Time.unscaledDeltaTime;
             
             float ratio = 1f - Mathf.Clamp01(timer / duration);
-            Time.timeScale = Mathf.Lerp(1f, 0f, ratio);
+            Time.timeScale = Mathf.Lerp(1f, 0f, ratio * 2f);
             Color col = spriteFade.color;
-            col.a = Mathf.Lerp(1f, 0f, ratio);
-            Debug.Log(ratio);
+            col.a = Mathf.Lerp(0f, 1f, ratio);
             spriteFade.color = col;
             yield return new WaitForEndOfFrame();
         }
