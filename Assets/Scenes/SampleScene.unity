@@ -142,13 +142,17 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 8072613022544763334, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_RenderMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_Pivot.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_RootOrder
@@ -172,11 +176,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 1122
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 631
+      objectReference: {fileID: 0}
+    - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01584786
+      objectReference: {fileID: 0}
+    - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01584786
+      objectReference: {fileID: 0}
+    - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01584786
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_LocalPosition.x
@@ -188,7 +204,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -6
       objectReference: {fileID: 0}
     - target: {fileID: 8072613022544763335, guid: 730a2cd5ea0797d49ac19b049e1df0ee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -452,6 +468,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 265624683746145936, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01291521
+      objectReference: {fileID: 0}
+    - target: {fileID: 265624683746145936, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01291521
+      objectReference: {fileID: 0}
+    - target: {fileID: 265624683746145936, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01291521
+      objectReference: {fileID: 0}
     - target: {fileID: 738641925822822188, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -498,15 +526,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 738641925822822192, guid: 7b36062fe6047474192a402d362ed599, type: 3}
       propertyPath: m_LocalPosition.x
@@ -560,6 +588,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 738641925822822193, guid: 7b36062fe6047474192a402d362ed599, type: 3}
+      propertyPath: m_RenderMode
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b36062fe6047474192a402d362ed599, type: 3}
 --- !u!1001 &1524986657220326387

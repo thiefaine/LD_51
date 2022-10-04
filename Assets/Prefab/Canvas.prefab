@@ -659,6 +659,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   panel: {fileID: 2691994787651034500}
+  forceFactor: 0.02
 --- !u!1 &738641925906075897
 GameObject:
   m_ObjectHideFlags: 0

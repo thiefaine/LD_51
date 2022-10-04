@@ -6,6 +6,7 @@ public class UIShakeManager : MonoBehaviour
 {
     public AnimationCurve curveEffect;
     public GameObject panel;
+    public float forceFactor;
     
     private Vector3 _startLocalPos;
 
@@ -35,7 +36,7 @@ public class UIShakeManager : MonoBehaviour
             _timerImpulse += Time.unscaledDeltaTime;
             float ratioImpulse = Mathf.Clamp01(_timerImpulse / _durationImpulse); 
             Vector2 directionImp = _directionImpulse.normalized * _forceImpusle;
-            offsetImpulse = directionImp * curveEffect.Evaluate(ratioImpulse);
+            offsetImpulse = directionImp * curveEffect.Evaluate(ratioImpulse) * forceFactor;
             if (ratioImpulse >= 1f)
                 _impulse = false;
         }
@@ -47,7 +48,7 @@ public class UIShakeManager : MonoBehaviour
             _timerShake += Time.unscaledDeltaTime;
             float ratioShake = Mathf.Clamp01(_timerShake / _durationShake);
             Vector2 directionSh = Random.insideUnitCircle.normalized * _forceShake;
-            offsetShake = directionSh * curveEffect.Evaluate(ratioShake);
+            offsetShake = directionSh * curveEffect.Evaluate(ratioShake) * forceFactor;
             if (ratioShake >= 1f)
                 _shake = false;
         }
