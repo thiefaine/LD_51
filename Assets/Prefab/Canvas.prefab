@@ -376,7 +376,7 @@ RectTransform:
   m_GameObject: {fileID: 738641925822822188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 265624683746145936}
@@ -397,7 +397,7 @@ Canvas:
   m_GameObject: {fileID: 738641925822822188}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 3
   m_PixelPerfect: 0
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &738641925822822195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2321,7 +2321,7 @@ RectTransform:
   m_GameObject: {fileID: 2691994787651034500}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.01291521, y: 0.01291521, z: 0.01291521}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 738641926009962746}
@@ -2505,6 +2505,22 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 3061941448736518583}
+          m_TargetAssemblyTypeName: ShopManager, Assembly-CSharp
+          m_MethodName: OnClickChoice2
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
     callback:
       m_PersistentCalls:
         m_Calls:
