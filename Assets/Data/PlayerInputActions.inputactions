@@ -244,7 +244,7 @@
                 {
                     "name": "",
                     "id": "bb4978e0-bae1-454a-89b9-fc5a34e9b97f",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
